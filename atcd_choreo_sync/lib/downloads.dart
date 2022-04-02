@@ -57,6 +57,7 @@ Future _extractZipIsolate(Tuple3<SendPort, String, String> params) async {
       archiveFiles.add(fname);
     }
   }
+  await inputStream.close();
   Isolate.exit(sendPort, archiveFiles);
 }
 
