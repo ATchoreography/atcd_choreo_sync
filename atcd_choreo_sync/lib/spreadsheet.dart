@@ -10,8 +10,10 @@ import 'model.dart';
 
 // The best date is a sushi date anyway
 String fixFreedomDate(String freedomDate) {
+  // From MM/DD/YYYY
   var split = freedomDate.split("/");
-  return <String>[split[2], split[0], split[1]].join("/");
+  // To YYYY/MM/DD
+  return <String>[split[2].padLeft(4, '0'), split[0].padLeft(2, '0'), split[1].padLeft(2, '0')].join("/");
 }
 
 Stream<Choreo> fetchChoreos({bool has7zip = false}) async* {
