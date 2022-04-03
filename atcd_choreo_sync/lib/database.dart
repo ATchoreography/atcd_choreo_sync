@@ -30,7 +30,7 @@ Future<String> _getDBPath() async {
 
 Future<String> _ensureDBPath() async {
   final String dbPath = await _getDBPath();
-  print("Database location: $dbPath");
+  // print("Database location: $dbPath");
   await Directory(dbPath).create(recursive: true);
   return dbPath;
 }
