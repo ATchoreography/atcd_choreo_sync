@@ -18,9 +18,9 @@ class Settings {
 
   setChoreosPath(String? value) async {
     if (value == null || value.isEmpty) {
-      (await _prefs).remove("choreos_path");
+      await (await _prefs).remove("choreos_path");
     } else {
-      (await _prefs).setString("choreos_path", value);
+      await (await _prefs).setString("choreos_path", value);
     }
   }
 
@@ -39,9 +39,19 @@ class Settings {
 
   setCsvUrl(String? value) async {
     if (value == null || value.isEmpty) {
-      (await _prefs).remove("csv_url");
+      await (await _prefs).remove("csv_url");
     } else {
-      (await _prefs).setString("csv_url", value);
+      await (await _prefs).setString("csv_url", value);
+    }
+  }
+
+  Future<String?> get z7installPath async => (await _prefs).getString("7zip_install_path");
+
+  set7zInstallPath(String? value) async {
+    if (value == null || value.isEmpty) {
+      await (await _prefs).remove("7zip_install_path");
+    } else {
+      await (await _prefs).setString("7zip_install_path", value);
     }
   }
 }

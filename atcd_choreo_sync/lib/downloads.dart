@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:archive/archive_io.dart';
+import 'package:atcd_choreo_sync/7zip/7zip.dart';
 import 'package:atcd_choreo_sync/repositories.dart';
 import 'package:atcd_choreo_sync/settings.dart';
 import 'package:dio/dio.dart';
@@ -72,16 +73,17 @@ Future<List<String>> downloadChoreo(Choreo choreo) async {
   Uri uri = Uri.parse(choreo.url);
   String filename = uri.pathSegments.last;
 
-  // For now
-  assert(choreo.url.endsWith(".zip"));
-
   String archivePath = join((await getTemporaryDirectory()).path, choreo.id!.toString() + "-" + filename);
 
   Dio porco = Dio(); // lol
   await porco.download(choreo.url, archivePath);
 
   try {
-    return await extractZip(choreoPath, archivePath);
+    if (archivePath.toLowerCase().endsWith(".zip")) {
+      return await extractZip(choreoPath, archivePath);
+    } else {
+      return await extract7zip(choreoPath, archivePath);
+    }
   } finally {
     await File(archivePath).delete();
   }

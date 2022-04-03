@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:atcd_choreo_sync/7zip/7zip.dart';
 import 'package:atcd_choreo_sync/database.dart';
 import 'package:atcd_choreo_sync/repositories.dart';
 import 'package:atcd_choreo_sync/settings.dart';
@@ -7,8 +8,8 @@ import 'package:atcd_choreo_sync/spreadsheet.dart';
 import 'package:atcd_choreo_sync/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:prompt_dialog/prompt_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'android.dart';
 import 'downloads.dart';
@@ -125,6 +126,7 @@ enum PopupMenuCommands {
   clearDownloadLocation,
   settingsCsvUrl,
   settingsDownloadLocation,
+  settings7zipDirectory,
   aboutDialog
 }
 
@@ -134,6 +136,7 @@ class _MainWindowState extends State<MainWindow> {
 
   String filterQuery = "";
   bool initialized = false;
+  bool has7zip = Platform.isAndroid;
   bool isDownloading = false;
   bool shouldCancelDownload = false;
   List<Choreo> choreos = [];
@@ -195,7 +198,7 @@ class _MainWindowState extends State<MainWindow> {
   }
 
   _filterSortChoreos() {
-    filteredChoreos = choreos.where((it) => it.tryFilter(filterQuery)).toList();
+    filteredChoreos = choreos.where((it) => it.tryFilter(filterQuery, has7zip)).toList();
     filteredChoreos.sort(_choreoComparator);
   }
 
@@ -217,10 +220,12 @@ class _MainWindowState extends State<MainWindow> {
   }
 
   Future _syncSpreadsheet() async {
+    has7zip = await is7zipAvailable(); // Check again
+
     List<Choreo> newChoreos = [];
     final db = await openDB();
     try {
-      await for (Choreo choreo in persistToDatabase(fetchChoreos(), db)) {
+      await for (Choreo choreo in persistToDatabase(fetchChoreos(has7zip: has7zip), db)) {
         newChoreos.add(choreo);
       }
       _setChoreos(newChoreos, await genDownloadStatusMap(newChoreos, db));
@@ -272,6 +277,20 @@ class _MainWindowState extends State<MainWindow> {
 
         sortBy = await Settings().sortBy;
         sortDirection = await Settings().sortDirection;
+
+        if (!await is7zipAvailable()) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: const Text("7-Zip is not installed. You will not be able to download 7z choreos"),
+            duration: const Duration(seconds: 10),
+            action: SnackBarAction(
+              label: "More info...",
+              onPressed: () async =>
+                  await launch("https://telegra.ph/Installing-7-Zip-for-the-ATCD-Choreo-Sync-tool-04-03"),
+            ),
+          ));
+        } else {
+          has7zip = true;
+        }
 
         await ensureStoragePermission();
         await _loadFromDb();
@@ -399,8 +418,18 @@ class _MainWindowState extends State<MainWindow> {
                   if (setting != null) {
                     await Settings().setChoreosPath(setting);
                   }
+                  has7zip = await is7zipAvailable();
                   break;
-
+                case PopupMenuCommands.settings7zipDirectory:
+                  String? setting = await prompt(context,
+                      title: const Text("7-Zip installation folder"),
+                      initialValue: await Settings().z7installPath,
+                      isSelectedInitialValue: true,
+                      textOK: const Text("Save"));
+                  if (setting != null) {
+                    await Settings().set7zInstallPath(setting);
+                  }
+                  break;
                 default:
                   setState(() {
                     switch (item) {
@@ -438,67 +467,76 @@ class _MainWindowState extends State<MainWindow> {
                   break;
               }
             },
-            itemBuilder: (context) => [
-              const PopupMenuItem(child: Text("Sort by"), enabled: false, height: 30),
-              CheckedPopupMenuItem(
-                value: PopupMenuCommands.sortByTitle,
-                child: const Text("Title"),
-                checked: sortBy == SortBy.title,
-              ),
-              CheckedPopupMenuItem(
-                value: PopupMenuCommands.sortByArtists,
-                child: const Text("Artists"),
-                checked: sortBy == SortBy.artists,
-              ),
-              CheckedPopupMenuItem(
-                value: PopupMenuCommands.sortByMapper,
-                child: const Text("Mapper"),
-                checked: sortBy == SortBy.mapper,
-              ),
-              CheckedPopupMenuItem(
-                value: PopupMenuCommands.sortByReleased,
-                child: const Text("Release date"),
-                checked: sortBy == SortBy.released,
-              ),
-              CheckedPopupMenuItem(
-                value: PopupMenuCommands.sortByBpm,
-                child: const Text("BPM"),
-                checked: sortBy == SortBy.bpm,
-              ),
-              CheckedPopupMenuItem(
-                value: PopupMenuCommands.sortByDuration,
-                child: const Text("Duration"),
-                checked: sortBy == SortBy.duration,
-              ),
-              const PopupMenuDivider(),
-              const PopupMenuItem(child: Text("Sort direction"), enabled: false, height: 30),
-              CheckedPopupMenuItem(
-                value: PopupMenuCommands.sortDirAscending,
-                child: const Text("Ascending"),
-                checked: sortDirection == SortDirection.ascending,
-              ),
-              CheckedPopupMenuItem(
-                value: PopupMenuCommands.sortDirDescending,
-                child: const Text("Descending"),
-                checked: sortDirection == SortDirection.descending,
-              ),
-              const PopupMenuDivider(),
-              const PopupMenuItem(child: Text("Settings"), enabled: false, height: 30),
-              const PopupMenuItem(value: PopupMenuCommands.settingsCsvUrl, child: Text("Spreadsheet CSV URL")),
-              PopupMenuItem(
-                value: PopupMenuCommands.settingsDownloadLocation,
-                child: const Text("Download location"),
-                enabled: !isDownloading,
-              ),
-              const PopupMenuDivider(),
-              const PopupMenuItem(child: Text("Actions"), enabled: false, height: 30),
-              PopupMenuItem(
-                value: PopupMenuCommands.clearDownloadLocation,
-                child: const Text("Clear download location"),
-                enabled: !isDownloading,
-              ),
-              const PopupMenuItem(value: PopupMenuCommands.aboutDialog, child: Text("About..."))
-            ],
+            itemBuilder: (context) =>
+                <PopupMenuEntry<PopupMenuCommands>>[
+                  const PopupMenuItem(child: Text("Sort by"), enabled: false, height: 30),
+                  CheckedPopupMenuItem(
+                    value: PopupMenuCommands.sortByTitle,
+                    child: const Text("Title"),
+                    checked: sortBy == SortBy.title,
+                  ),
+                  CheckedPopupMenuItem(
+                    value: PopupMenuCommands.sortByArtists,
+                    child: const Text("Artists"),
+                    checked: sortBy == SortBy.artists,
+                  ),
+                  CheckedPopupMenuItem(
+                    value: PopupMenuCommands.sortByMapper,
+                    child: const Text("Mapper"),
+                    checked: sortBy == SortBy.mapper,
+                  ),
+                  CheckedPopupMenuItem(
+                    value: PopupMenuCommands.sortByReleased,
+                    child: const Text("Release date"),
+                    checked: sortBy == SortBy.released,
+                  ),
+                  CheckedPopupMenuItem(
+                    value: PopupMenuCommands.sortByBpm,
+                    child: const Text("BPM"),
+                    checked: sortBy == SortBy.bpm,
+                  ),
+                  CheckedPopupMenuItem(
+                    value: PopupMenuCommands.sortByDuration,
+                    child: const Text("Duration"),
+                    checked: sortBy == SortBy.duration,
+                  ),
+                  const PopupMenuDivider(),
+                  const PopupMenuItem(child: Text("Sort direction"), enabled: false, height: 30),
+                  CheckedPopupMenuItem(
+                    value: PopupMenuCommands.sortDirAscending,
+                    child: const Text("Ascending"),
+                    checked: sortDirection == SortDirection.ascending,
+                  ),
+                  CheckedPopupMenuItem(
+                    value: PopupMenuCommands.sortDirDescending,
+                    child: const Text("Descending"),
+                    checked: sortDirection == SortDirection.descending,
+                  ),
+                  const PopupMenuDivider(),
+                  const PopupMenuItem(child: Text("Settings"), enabled: false, height: 30),
+                ] +
+                (!Platform.isAndroid
+                    ? <PopupMenuEntry<PopupMenuCommands>>[
+                        const PopupMenuItem(
+                            value: PopupMenuCommands.settings7zipDirectory, child: Text("7-Zip installation folder")),
+                      ]
+                    : <PopupMenuEntry<PopupMenuCommands>>[]) +
+                <PopupMenuEntry<PopupMenuCommands>>[
+                  const PopupMenuItem(value: PopupMenuCommands.settingsCsvUrl, child: Text("Spreadsheet CSV URL")),
+                  PopupMenuItem(
+                    value: PopupMenuCommands.settingsDownloadLocation,
+                    child: const Text("Download location"),
+                    enabled: !isDownloading,
+                  ),
+                  const PopupMenuDivider(),
+                  const PopupMenuItem(child: Text("Actions"), enabled: false, height: 30),
+                  PopupMenuItem(
+                    value: PopupMenuCommands.clearDownloadLocation,
+                    child: const Text("Clear download location"),
+                    enabled: !isDownloading,
+                  ),
+                  const PopupMenuItem(value: PopupMenuCommands.aboutDialog, child: Text("About..."))
+                ],
           ),
         ],
       );

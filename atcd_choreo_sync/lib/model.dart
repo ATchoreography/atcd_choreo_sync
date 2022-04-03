@@ -63,7 +63,10 @@ class Choreo extends ModelObject {
     if (map.containsKey("choreoid")) id = map["choreoid"] as int;
   }
 
-  bool tryFilter(String query) {
+  bool tryFilter(String query, bool has7zip) {
+    if (!has7zip && url.toLowerCase().endsWith(".7z")) {
+      return false;
+    }
     query = query.toLowerCase();
     return title.toLowerCase().contains(query) ||
         artists.toLowerCase().contains(query) ||

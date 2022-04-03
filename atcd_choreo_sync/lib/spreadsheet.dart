@@ -14,7 +14,7 @@ String fixFreedomDate(String freedomDate) {
   return <String>[split[2], split[0], split[1]].join("/");
 }
 
-Stream<Choreo> fetchChoreos() async* {
+Stream<Choreo> fetchChoreos({bool has7zip = false}) async* {
   print("Fetching choreography spreadsheet");
   final Uri _csvUrl = Uri.parse(await Settings().csvUrl);
   var resp = await http.get(_csvUrl);
@@ -77,7 +77,10 @@ Stream<Choreo> fetchChoreos() async* {
     }
 
     String url = row[urlCol].trim();
-    if (!url.startsWith("https://") || !url.endsWith(".zip")) {
+    if (!url.startsWith("https://")) {
+      continue;
+    }
+    if (!has7zip && url.endsWith(".7z")) {
       continue;
     }
 
