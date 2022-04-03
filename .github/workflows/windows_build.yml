@@ -1,4 +1,4 @@
-name: Build app Windows
+name: Windows build
 
 on:
   push:

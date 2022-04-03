@@ -1,4 +1,4 @@
-name: Build app Android (debug)
+name: Quest/Android build
 
 on:
   push:
