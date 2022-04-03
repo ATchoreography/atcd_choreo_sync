@@ -1,0 +1,43 @@
+name: Build app Android (debug)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        
+      - name: Install Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+          
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '2.5.3'
+          
+      - name: Download Dart/Flutter dependencies
+        run: cd atcd_choreo_sync && flutter pub get
+        
+      - name: Build debug APK
+        run: cd atcd_choreo_sync && flutter build apk
+        
+      - name: Build debug AAB
+        run: cd atcd_choreo_sync && flutter build appbundle
+        
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: app_debug
+          path: atcd_choreo_sync/build/app/outputs/bundle/debug/
+          
