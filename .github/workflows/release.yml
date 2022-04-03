@@ -35,10 +35,10 @@ jobs:
       - name: Download Dart/Flutter dependencies
         run: cd atcd_choreo_sync && flutter pub get
         
-      - name: Build debug APK
+      - name: Build release APK
         run: cd atcd_choreo_sync && flutter build apk
         
-      - name: Build debug AAB
+      - name: Build release AAB
         run: cd atcd_choreo_sync && flutter build appbundle
         
       - name: Upload artifacts
