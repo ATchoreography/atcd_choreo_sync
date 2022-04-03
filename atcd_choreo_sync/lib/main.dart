@@ -57,15 +57,20 @@ class ChoreoListEntry extends StatelessWidget {
     switch (status) {
       case DownloadStatus.missing:
       case DownloadStatus.toDownload:
-        return Checkbox(
-            value: status == DownloadStatus.toDownload,
-            onChanged: (bool? status) async => setShouldDownloadCallback(choreo, status ?? false));
+        return Container(
+          child: Checkbox(
+              value: status == DownloadStatus.toDownload,
+              onChanged: (bool? status) async => setShouldDownloadCallback(choreo, status ?? false)),
+          width: 48,
+          height: 48,
+          padding: EdgeInsets.zero,
+        );
       case DownloadStatus.downloading:
         return Container(
             child: const CircularProgressIndicator(value: null),
-            height: 32,
-            width: 32,
-            padding: const EdgeInsets.all(6));
+            width: 48,
+            height: 48,
+            padding: const EdgeInsets.all(14));
       case DownloadStatus.present:
         return Container(
           child: IconButton(
@@ -74,8 +79,8 @@ class ChoreoListEntry extends StatelessWidget {
             iconSize: 24,
             padding: EdgeInsets.zero,
           ),
-          width: 32,
-          height: 32,
+          width: 48,
+          height: 48,
           padding: EdgeInsets.zero,
         );
     }
@@ -84,7 +89,7 @@ class ChoreoListEntry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 5, bottom: 5),
+      padding: EdgeInsets.zero,
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         _getStatusWidget(),
         Expanded(
@@ -594,7 +599,7 @@ class _MainWindowState extends State<MainWindow> {
                     ),
                   )
                 : ListView.builder(
-                    padding: const EdgeInsets.all(15),
+                    padding: const EdgeInsets.only(top: 10, bottom: 10, left: 5, right: 5),
                     itemCount: filteredChoreos.length,
                     itemBuilder: _getChoreoRow,
                     physics: const AlwaysScrollableScrollPhysics(),
