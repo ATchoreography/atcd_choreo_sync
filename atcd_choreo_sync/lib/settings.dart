@@ -1,6 +1,7 @@
 import 'dart:core';
 import 'dart:io';
 
+import 'package:atcd_choreo_sync/model.dart';
 import 'package:atcd_choreo_sync/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,6 +33,26 @@ class Settings {
       SortDirection.values.byName((await _prefs).getString("sort_direction") ?? "descending");
 
   setSortDirection(SortDirection value) async => await (await _prefs).setString("sort_direction", value.name);
+
+  Future<DownloadStatus?> get showOnly async {
+    final value = (await _prefs).getString("show_only");
+    if (value != null) {
+      return DownloadStatus.values.byName(value);
+    } else {
+      return null;
+    }
+  }
+
+  setShowOnly(DownloadStatus? value) async {
+    if (value != DownloadStatus.missing || value != DownloadStatus.present) {
+      value = null;
+    }
+    if (value != null) {
+      return await (await _prefs).setString("show_only", value.name);
+    } else {
+      await (await _prefs).remove("show_only");
+    }
+  }
 
   Future<String> get csvUrl async =>
       (await _prefs).getString("csv_url") ??

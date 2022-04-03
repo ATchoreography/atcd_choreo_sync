@@ -144,6 +144,9 @@ enum PopupMenuCommands {
   sortByDuration,
   sortDirAscending,
   sortDirDescending,
+  showAll,
+  showDownloadedOnly,
+  showMissingOnly,
   clearDownloadLocation,
   settingsCsvUrl,
   settingsDownloadLocation,
@@ -167,6 +170,7 @@ class _MainWindowState extends State<MainWindow> {
   int toDownloadCount = 0;
 
   SortBy sortBy = SortBy.title;
+  DownloadStatus? showOnly;
   SortDirection sortDirection = SortDirection.ascending;
 
   _MainWindowState() {
@@ -218,8 +222,23 @@ class _MainWindowState extends State<MainWindow> {
     return result;
   }
 
+  bool _shouldShowForShowOnly(Choreo choreo) {
+    if (showOnly == null) {
+      return true;
+    }
+    switch (downloadStatus[choreo.id!]) {
+      case null:
+      case DownloadStatus.missing:
+      case DownloadStatus.toDownload:
+      case DownloadStatus.downloading:
+        return showOnly == DownloadStatus.missing;
+      case DownloadStatus.present:
+        return showOnly == DownloadStatus.present;
+    }
+  }
+
   _filterSortChoreos() {
-    filteredChoreos = choreos.where((it) => it.tryFilter(filterQuery, has7zip)).toList();
+    filteredChoreos = choreos.where((it) => it.tryFilter(filterQuery, has7zip) && _shouldShowForShowOnly(it)).toList();
     filteredChoreos.sort(_choreoComparator);
   }
 
@@ -279,6 +298,7 @@ class _MainWindowState extends State<MainWindow> {
     }
     setState(() {
       downloadStatus[choreo.id!] = DownloadStatus.missing;
+      _filterSortChoreos();
     });
   }
 
@@ -358,6 +378,7 @@ class _MainWindowState extends State<MainWindow> {
             setState(() {
               downloadedCount++;
               downloadStatus[choreo.id!] = DownloadStatus.present;
+              _filterSortChoreos();
             });
           } catch (_, stacktrace) {
             print(stacktrace);
@@ -365,6 +386,7 @@ class _MainWindowState extends State<MainWindow> {
             setState(() {
               downloadedCount++;
               downloadStatus[choreo.id!] = DownloadStatus.toDownload;
+              _filterSortChoreos();
             });
           }
         }
@@ -479,6 +501,15 @@ class _MainWindowState extends State<MainWindow> {
                       case PopupMenuCommands.sortDirDescending:
                         sortDirection = SortDirection.descending;
                         break;
+                      case PopupMenuCommands.showAll:
+                        showOnly = null;
+                        break;
+                      case PopupMenuCommands.showMissingOnly:
+                        showOnly = DownloadStatus.missing;
+                        break;
+                      case PopupMenuCommands.showDownloadedOnly:
+                        showOnly = DownloadStatus.present;
+                        break;
                       default:
                         break;
                     }
@@ -486,6 +517,7 @@ class _MainWindowState extends State<MainWindow> {
                   });
                   await Settings().setSortBy(sortBy);
                   await Settings().setSortDirection(sortDirection);
+                  await Settings().setShowOnly(showOnly);
                   break;
               }
             },
@@ -533,6 +565,23 @@ class _MainWindowState extends State<MainWindow> {
                     value: PopupMenuCommands.sortDirDescending,
                     child: const Text("Descending"),
                     checked: sortDirection == SortDirection.descending,
+                  ),
+                  const PopupMenuDivider(),
+                  const PopupMenuItem(child: Text("Show"), enabled: false, height: 30),
+                  CheckedPopupMenuItem(
+                    value: PopupMenuCommands.showAll,
+                    child: const Text("All"),
+                    checked: showOnly == null,
+                  ),
+                  CheckedPopupMenuItem(
+                    value: PopupMenuCommands.showMissingOnly,
+                    child: const Text("Missing only"),
+                    checked: showOnly == DownloadStatus.missing,
+                  ),
+                  CheckedPopupMenuItem(
+                    value: PopupMenuCommands.showDownloadedOnly,
+                    child: const Text("Downloaded only"),
+                    checked: showOnly == DownloadStatus.present,
                   ),
                   const PopupMenuDivider(),
                   const PopupMenuItem(child: Text("Settings"), enabled: false, height: 30),
