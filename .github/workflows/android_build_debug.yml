@@ -39,5 +39,8 @@ jobs:
         uses: actions/upload-artifact@v3.0.0
         with:
           name: app_debug
-          path: atcd_choreo_sync/build/app/outputs/bundle/debug/
+          # The filenames say "release" but they're signed with the debug keys
+          path: |
+            atcd_choreo_sync/build/app/outputs/flutter-apk/app-release.apk
+            atcd_choreo_sync/build/app/outputs/bundle/release/app-release.aab
           
