@@ -40,7 +40,7 @@ jobs:
 
       - name: Pack AppImage
         run: |
-          sudo chown -R $(id -u):$(id -g) AppDir
+          sudo chown -R $(id -u):$(id -g) .
           cp appimage/AppRun AppDir/AppRun  # appimage-builder's AppRun breaks Wayland
           curl -L https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage > appimagetool.AppImage
           chmod +x appimagetool.AppImage
