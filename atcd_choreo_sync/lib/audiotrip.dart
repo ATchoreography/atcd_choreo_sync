@@ -35,8 +35,15 @@ Future<String> getChoreosPath() async {
   } else if (Platform.isWindows) {
     return _windowsChoreoPath();
   } else if (Platform.isAndroid) {
-    Directory sdcard = (await getExternalStorageDirectory())!;
-    return join(sdcard.path, "Android", "data", "com.KinemotikStudios.AudioTripQuest", "files", "Songs", "ATCD Sync");
+    Directory filesDir = (await getExternalStorageDirectory())!;
+    List<String> splitFilesPath = split(filesDir.path);
+    int androidIndex = splitFilesPath.indexOf("Android");
+    if (androidIndex < 0) {
+      print("Unable to ask nicely for the sdcard location, going with a guess");
+      return "/sdcard/Android/data/com.KinemotikStudios.AudioTripQuest/files/Songs/ATCD Sync";
+    }
+    String androidPath = joinAll(splitFilesPath.sublist(0, androidIndex + 1));
+    return join(androidPath, "data", "com.KinemotikStudios.AudioTripQuest", "files", "Songs", "ATCD Sync");
   }
   throw UnsupportedError("The current platform is not supported!");
 }
