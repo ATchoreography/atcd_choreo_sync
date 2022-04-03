@@ -23,6 +23,7 @@ void main() {
 class ChoreoSyncApp extends StatelessWidget {
   const ChoreoSyncApp({Key? key}) : super(key: key);
   final String appName = "ATCD Choreography Sync";
+  final Color atcdColor = const Color(0xFF3BFFFB);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,20 @@ class ChoreoSyncApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: appName,
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: const Color(0xFF000000),
+        appBarTheme: AppBarTheme(
+          color: atcdColor,
+          foregroundColor: const Color(0xFF000000),
+        ),
+        progressIndicatorTheme: ProgressIndicatorThemeData(
+          color: atcdColor,
+        ),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: atcdColor,
+        ),
+        primaryColor: atcdColor,
+        primarySwatch: Colors.teal,
       ),
       home: MainWindow(title: appName),
     );
@@ -60,6 +74,7 @@ class ChoreoListEntry extends StatelessWidget {
       case DownloadStatus.toDownload:
         return Container(
           child: Checkbox(
+              checkColor: const Color(0xFF000000),
               value: status == DownloadStatus.toDownload,
               onChanged: (bool? status) async => setShouldDownloadCallback(choreo, status ?? false)),
           width: 48,
