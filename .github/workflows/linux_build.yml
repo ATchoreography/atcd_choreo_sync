@@ -42,7 +42,7 @@ jobs:
         run: |
           sudo chown -R $(id -u):$(id -g) AppDir
           cp appimage/AppRun AppDir/AppRun  # appimage-builder's AppRun breaks Wayland
-          curl https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage > appimagetool.AppImage
+          curl -L https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage > appimagetool.AppImage
           chmod +x appimagetool.AppImage
           ARCH=x86_64 ./appimagetool.AppImage AppDir 'ATCD Choreography Sync-${GITHUB_REF##*/}-x86_64.AppImage'
 
