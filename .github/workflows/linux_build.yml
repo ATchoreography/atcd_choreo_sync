@@ -1,0 +1,54 @@
+name: Linux build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+          
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '2.10.4'
+      
+      - name: Configure Flutter
+        run: |
+          flutter config --enable-linux-desktop
+          sudo apt-get update -y
+          sudo apt-get install -y ninja-build libgtk-3-dev
+      
+      - name: Download Dart/Flutter dependencies
+        run: cd atcd_choreo_sync && flutter pub get
+        
+      - name: Build GNU/Linux application
+        run: cd atcd_choreo_sync && flutter build linux
+
+      - name: Prepare AppDir for AppImage
+        uses: AppImageCrafters/build-appimage@master
+        with:
+          recipe: appimage/AppImageBuilder.yml
+          args: --skip-appimage
+
+      - name: Pack AppImage
+        run: |
+          sudo chown -R $(id -u):$(id -g) AppDir
+          cp appimage/AppRun AppDir/AppRun  # appimage-builder's AppRun breaks Wayland
+          curl https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage > appimagetool.AppImage
+          chmod +x appimagetool.AppImage
+          ARCH=x86_64 ./appimagetool.AppImage AppDir 'ATCD Choreography Sync-${GITHUB_REF##*/}-x86_64.AppImage'
+
+      - name: Upload build
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: appimage
+          path: ATCD*AppImage
+          

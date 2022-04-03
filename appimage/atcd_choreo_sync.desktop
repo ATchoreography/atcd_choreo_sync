@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=ATCD Choreography Sync
+Icon=atcd_choreo_sync
+Exec=atcd_choreo_sync
+StartupWMClass=atcd_choreo_sync
+Categories=Utility;
+Keywords=AppImage;Store;AppImageHub;Flutter;Gtk;

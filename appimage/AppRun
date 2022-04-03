@@ -1,0 +1,4 @@
+#!/bin/sh
+cd "$(dirname "$0")"
+export PATH="$PWD/usr/bin:$PWD/usr/local/bin:$PATH"
+exec ./atcd_choreo_sync "$@"
