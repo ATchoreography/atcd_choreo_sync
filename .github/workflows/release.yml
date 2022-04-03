@@ -118,13 +118,13 @@ jobs:
           cp appimage/AppRun AppDir/AppRun  # appimage-builder's AppRun breaks Wayland
           curl -L https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage > appimagetool.AppImage
           chmod +x appimagetool.AppImage
-          ARCH=x86_64 ./appimagetool.AppImage AppDir 'ATCD Choreography Sync-${GITHUB_REF##*/}-x86_64.AppImage'
+          ARCH=x86_64 ./appimagetool.AppImage AppDir 'atcd_choreo_sync.AppImage'
 
       - name: Upload build
         uses: actions/upload-artifact@v3.0.0
         with:
           name: appimage_linux
-          path: ATCD*AppImage
+          path: atcd_choreo_sync.AppImage
 
   release:
     name: "Upload release binaries"
@@ -153,10 +153,12 @@ jobs:
           path: .
 
       - name: Fixup builds
+        shell: bash
+        env:
+          TAG: ${{ github.ref_name }}
         run: |
-          export TAG="${GITHUB_REF##*/}"
           mkdir outputs
-          mv *AppImage outputs/
+          mv *AppImage outputs/"atcd_choreo_sync-gnulinux-$TAG.AppImage"
           mv app_windows "atcd_choreo_sync-windows-$TAG"
           zip "outputs/atcd_choreo_sync-windows-$TAG.zip" "atcd_choreo_sync-windows-$TAG"
           mv flutter-apk/app-release.apk "outputs/atcd_choreo_sync-OculusQuest-android-$TAG.apk"
