@@ -36,10 +36,10 @@ jobs:
         run: cd atcd_choreo_sync && flutter pub get
         
       - name: Build debug APK
-        run: cd atcd_choreo_sync && flutter build apk --release --no-obfuscate
+        run: cd atcd_choreo_sync && flutter build apk
         
       - name: Build debug AAB
-        run: cd atcd_choreo_sync && flutter build appbundle --release --no-obfuscate
+        run: cd atcd_choreo_sync && flutter build appbundle
         
       - name: Upload artifacts
         uses: actions/upload-artifact@v3.0.0
