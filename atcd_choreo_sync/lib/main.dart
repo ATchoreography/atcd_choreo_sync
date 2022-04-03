@@ -27,6 +27,7 @@ class ChoreoSyncApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scrollBehavior: AllDevicesDragScrollBehavior(),
       debugShowCheckedModeBanner: false,
       title: appName,
       theme: ThemeData(
