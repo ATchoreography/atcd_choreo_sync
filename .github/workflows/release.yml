@@ -1,0 +1,121 @@
+name: Release (all platforms)
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build-android:
+    name: "Android app build"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        
+      - name: Install Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+          
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '2.10.4'
+      
+      - name: Set up secrets
+        env:
+          ANDROID_KEY_PROPRERTIES: ${{ secrets.ANDROID_KEY_PROPRERTIES }}
+          ANDROID_RELEASE_KEYSTORE: ${{ secrets.ANDROID_RELEASE_KEYSTORE }}
+        run: |
+          echo "$ANDROID_KEY_PROPRERTIES" > atcd_choreo_sync/android/key.properties
+          echo "$ANDROID_RELEASE_KEYSTORE" | base64 -d > /tmp/keystore.jks
+
+      - name: Download Dart/Flutter dependencies
+        run: cd atcd_choreo_sync && flutter pub get
+        
+      - name: Build debug APK
+        run: cd atcd_choreo_sync && flutter build apk --release --no-obfuscate
+        
+      - name: Build debug AAB
+        run: cd atcd_choreo_sync && flutter build appbundle --release --no-obfuscate
+        
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: app_android
+          path: |
+            atcd_choreo_sync/build/app/outputs/flutter-apk/app-release.apk
+            atcd_choreo_sync/build/app/outputs/bundle/release/app-release.aab
+
+  build-windows:
+    name: "Windows app build"
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+          
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '2.10.4'
+      
+      - name: Configure Flutter
+        run: flutter config --enable-windows-desktop
+      
+      - name: Download Dart/Flutter dependencies
+        run: cd atcd_choreo_sync && flutter pub get
+        
+      - name: Build Windows application
+        run: cd atcd_choreo_sync && flutter build windows
+
+      - name: Sprinkle in some SQLite3 magic
+        shell: bash
+        run: |
+          ls -R
+          curl https://github.com/tekartik/sqflite/raw/master/sqflite_common_ffi/lib/src/windows/sqlite3.dll > atcd_choreo_sync/build/windows/runner/Release/sqlite3.dll
+               
+      - name: Upload build
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: app_windows
+          path: atcd_choreo_sync/build/windows/runner/Release/
+
+  release:
+    name: "Upload release binaries"
+    runs-on: ubuntu-latest
+    needs:
+      - build-android
+      - build-windows
+    steps:
+      - name: Download Windows build
+        uses: actions/download-artifact@v3
+        with:
+          name: app_windows
+          path: app_windows
+
+      - name: Download Android build
+        uses: actions/download-artifact@v3
+        with:
+          name: app_android
+          path: .
+
+      - name: Fixup builds
+        run: |
+          export TAG="${GITHUB_REF##*/}"
+          mkdir outputs
+          mv app_windows "atcd_choreo_sync-windows-$TAG"
+          zip "outputs/atcd_choreo_sync-windows-$TAG.zip" "atcd_choreo_sync-windows-$TAG"
+          mv flutter-apk/app-release.apk "outputs/atcd_choreo_sync-OculusQuest-android-$TAG.apk"
+          mv bundle/release/app-release.aab "outputs/atcd_choreo_sync-$TAG.aab"
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: outputs/*
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
+          prerelease: true
