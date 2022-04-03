@@ -359,12 +359,13 @@ class _MainWindowState extends State<MainWindow> {
               downloadedCount++;
               downloadStatus[choreo.id!] = DownloadStatus.present;
             });
-          } catch (_) {
+          } catch (_, stacktrace) {
+            print(stacktrace);
+
             setState(() {
               downloadedCount++;
-              downloadStatus[choreo.id!] = DownloadStatus.missing;
+              downloadStatus[choreo.id!] = DownloadStatus.toDownload;
             });
-            rethrow;
           }
         }
       }
