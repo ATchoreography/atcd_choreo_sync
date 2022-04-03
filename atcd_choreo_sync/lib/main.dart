@@ -151,7 +151,8 @@ enum PopupMenuCommands {
   settingsCsvUrl,
   settingsDownloadLocation,
   settings7zipDirectory,
-  aboutDialog
+  aboutDialog,
+  atcdClubLink
 }
 
 class _MainWindowState extends State<MainWindow> {
@@ -440,6 +441,9 @@ class _MainWindowState extends State<MainWindow> {
                           "This is free software; you are free to change and redistribute it.\n"
                           "There is NO WARRANTY, to the extent permitted by law.\n");
                   break;
+                case PopupMenuCommands.atcdClubLink:
+                  await launch("https://www.atcd.club");
+                  break;
                 case PopupMenuCommands.clearDownloadLocation:
                   await _clearDownloadLocation();
                   break;
@@ -589,24 +593,25 @@ class _MainWindowState extends State<MainWindow> {
                 (!Platform.isAndroid
                     ? <PopupMenuEntry<PopupMenuCommands>>[
                         const PopupMenuItem(
-                            value: PopupMenuCommands.settings7zipDirectory, child: Text("7-Zip installation folder")),
+                            value: PopupMenuCommands.settings7zipDirectory, child: Text("7-Zip installation folder…")),
                       ]
                     : <PopupMenuEntry<PopupMenuCommands>>[]) +
                 <PopupMenuEntry<PopupMenuCommands>>[
-                  const PopupMenuItem(value: PopupMenuCommands.settingsCsvUrl, child: Text("Spreadsheet CSV URL")),
+                  const PopupMenuItem(value: PopupMenuCommands.settingsCsvUrl, child: Text("Spreadsheet CSV URL…")),
                   PopupMenuItem(
                     value: PopupMenuCommands.settingsDownloadLocation,
-                    child: const Text("Download location"),
+                    child: const Text("Download location…"),
                     enabled: !isDownloading,
                   ),
                   const PopupMenuDivider(),
                   const PopupMenuItem(child: Text("Actions"), enabled: false, height: 30),
+                  const PopupMenuItem(value: PopupMenuCommands.aboutDialog, child: Text("About app…")),
+                  const PopupMenuItem(value: PopupMenuCommands.atcdClubLink, child: Text("Visit atcd.club…")),
                   PopupMenuItem(
                     value: PopupMenuCommands.clearDownloadLocation,
-                    child: const Text("Clear download location"),
+                    child: const Text("Wipe downloads folder"),
                     enabled: !isDownloading,
                   ),
-                  const PopupMenuItem(value: PopupMenuCommands.aboutDialog, child: Text("About..."))
                 ],
           ),
         ],
