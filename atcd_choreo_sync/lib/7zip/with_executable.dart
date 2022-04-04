@@ -20,7 +20,7 @@ Stream<String> _get7zSearchPaths() async* {
   yield exeDir;
   yield join(exeDir, "lib");
 
-  if (Platform.isLinux) {
+  if (Platform.isLinux || Platform.isMacOS) {
     // Linux: add $PATH
     if (env.containsKey("PATH")) {
       for (String item in env["PATH"]!.split(":")) {
@@ -44,7 +44,7 @@ Stream<String> _get7zSearchPaths() async* {
 }
 
 List<String> _get7zExecutableNames() {
-  var result = ["7z", "7za", "7zr"];
+  var result = ["7z", "7zz", "7za", "7zr"];
   if (Platform.isWindows) {
     return result.map((e) => e + ".exe").toList();
   }

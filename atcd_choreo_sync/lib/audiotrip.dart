@@ -28,12 +28,12 @@ String _windowsChoreoPath() {
 }
 
 Future<String> getChoreosPath() async {
-  if (Platform.isLinux) {
-    print("Warning! AT path discovery for Linux is not implemented! "
-        "This likely depends on the installation method, we need to find the wineprefix");
-    return "/tmp/AudioTripSongs/";
+  if (Platform.isLinux || Platform.isMacOS) {
+    return join(Platform.environment["HOME"]!, "ATCD Choreo Sync");
+
   } else if (Platform.isWindows) {
     return _windowsChoreoPath();
+
   } else if (Platform.isAndroid) {
     Directory filesDir = (await getExternalStorageDirectory())!;
     List<String> splitFilesPath = split(filesDir.path);
