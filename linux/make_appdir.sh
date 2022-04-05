@@ -9,6 +9,7 @@ rm -rf AppDir || true
 
 # Copy build to AppDir
 cp -r build/linux/x64/release/bundle AppDir
+cp $(ldd AppDir/atcd_choreo_sync | grep sqlite3 | grep -o '/.*.so.0') AppDir/lib/
 strip AppDir/atcd_choreo_sync
 
 # Set up desktop files

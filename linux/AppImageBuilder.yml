@@ -20,8 +20,6 @@ AppDir:
     - sourceline: deb http://archive.ubuntu.com/ubuntu/ bionic-backports main restricted universe multiverse
     - sourceline: deb http://security.ubuntu.com/ubuntu bionic-security main restricted universe multiverse
     include:
-    - dash
-    - libgtk-3-0
     - libsqlite3-0
     - p7zip
     exclude:

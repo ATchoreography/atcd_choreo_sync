@@ -44,7 +44,7 @@ Stream<String> _get7zSearchPaths() async* {
 }
 
 List<String> _get7zExecutableNames() {
-  var result = ["7z", "7zz", "7za", "7zr"];
+  var result = ["7zzs", "7zz", "7z", "7za", "7zr"];
   if (Platform.isWindows) {
     return result.map((e) => e + ".exe").toList();
   }
