@@ -17,8 +17,7 @@ flutter build apk --no-obfuscate
 
 ```bash
 flutter build linux
-# Run with:
-./build/linux/x64/release/bundle/atcd_choreo_sync
+# app will be at: build/linux/x64/release/bundle/atcd_choreo_sync
 ```
 
 ### Windows
@@ -27,6 +26,16 @@ Must be run on Windows, requires additional setup.
 
 ```bash
 flutter build windows
+# app will be at: build\windows\runner\Release\
+```
+
+### macOS
+
+Must be run on macOS, requires lots of additional setup
+
+```bash
+flutter build macos
+# app will be at: build/macos/Build/Products/Release/
 ```
 
 ## License
