@@ -67,7 +67,7 @@ jobs:
           path: build/windows/runner/Release/
 
   build-linux:
-    name: "Linux AppImage build"
+    name: "Linux AppImage"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -107,4 +107,29 @@ jobs:
         with:
           name: appimage_linux
           path: atcd_choreo_sync.AppImage
+  
+  build-macos:
+    name: "macOS"
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+          
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '2.10.4'
+      
+      - name: Build app
+        shell: bash
+        run: |
+          flutter config --enable-macos-desktop
+          flutter build macos
+               
+      - name: Upload build
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: app_windows
+          path: build/macos/Build/Products/Release/
+
 
