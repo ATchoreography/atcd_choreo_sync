@@ -1,0 +1,30 @@
+#############################################################################
+#                  App is damaged - Work around the issue                   #
+#############################################################################
+
+
+macOS verions newer than Catalina will mark any unsigned app as "damaged".
+
+=> Unsigned: it means I didn't pay a ~100€/year fee to Apple for them to
+   allow me to develop macOS apps
+
+Downloading the app from a web browser will have this effect.
+
+To install the application:
+
+- Download the app
+- Extract the archive
+- Drag and drop the app to Applications
+- Run the following command on the Terminal app to remove the "damaged" attribute
+
+  xattr -cr "/Applications/ATCD Choreography Sync.app"
+
+If it still doesn't allow you to open it from launchpad, be sure to visit
+"Applications" in Finder, right-click the app and select "Open".
+
+Note: this is not the same as double-clicking the app!
+
+After doing it once, the app should continue to run with no trouble.
+
+More about the quarantine flag here:
+https://eclecticlight.co/2020/10/29/quarantine-and-the-quarantine-flag/
