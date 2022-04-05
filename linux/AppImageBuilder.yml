@@ -1,7 +1,7 @@
 # appimage-builder recipe see https://appimage-builder.readthedocs.io for details
 version: 1
 script:
-  - ./appimage/make_appdir.sh
+  - ./linux/make_appdir.sh
 AppDir:
   path: ./AppDir
   app_info:
