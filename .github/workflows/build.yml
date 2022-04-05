@@ -109,7 +109,7 @@ jobs:
           # Get appimagetool and build appimage
           curl -L https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage > appimagetool.AppImage
           chmod +x appimagetool.AppImage
-          ARCH=x86_64 ./appimagetool.AppImage AppDir 'atcd_choreo_sync.AppImage'
+          ARCH=x86_64 ./appimagetool.AppImage AppDir './outputs/atcd_choreo_sync.AppImage'
 
       - name: Upload build
         uses: actions/upload-artifact@v3.0.0
