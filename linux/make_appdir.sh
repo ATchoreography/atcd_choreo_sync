@@ -9,6 +9,7 @@ rm -rf AppDir || true
 
 # Copy build to AppDir
 cp -r build/linux/x64/release/bundle AppDir
+strip AppDir/atcd_choreo_sync
 
 # Set up desktop files
 mkdir -p AppDir/usr/share/applications
