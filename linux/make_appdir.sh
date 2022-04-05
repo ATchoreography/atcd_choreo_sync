@@ -20,19 +20,19 @@ cp macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_512.png AppDir/atcd_
 
 # Set up hicolor icon theme icons
 mkdir -p AppDir/usr/share/icons/hicolor/1024x1024/apps/
-cp macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png AppDir/usr/share/icons/hicolor/1024x1024/apps/
+cp macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png AppDir/usr/share/icons/hicolor/1024x1024/apps/atcd_choreo_sync.png
 mkdir -p AppDir/usr/share/icons/hicolor/128x128/apps/
-cp macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_128.png AppDir/usr/share/icons/hicolor/128x128/apps/
+cp macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_128.png AppDir/usr/share/icons/hicolor/128x128/apps/atcd_choreo_sync.png
 mkdir -p AppDir/usr/share/icons/hicolor/16x16/apps/
-cp macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_16.png AppDir/usr/share/icons/hicolor/16x16/apps/
+cp macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_16.png AppDir/usr/share/icons/hicolor/16x16/apps/atcd_choreo_sync.png
 mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps/
-cp macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_256.png AppDir/usr/share/icons/hicolor/256x256/apps/
+cp macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_256.png AppDir/usr/share/icons/hicolor/256x256/apps/atcd_choreo_sync.png
 mkdir -p AppDir/usr/share/icons/hicolor/32x32/apps/
-cp macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_32.png AppDir/usr/share/icons/hicolor/32x32/apps/
+cp macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_32.png AppDir/usr/share/icons/hicolor/32x32/apps/atcd_choreo_sync.png
 mkdir -p AppDir/usr/share/icons/hicolor/512x512/apps/
-cp macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_512.png AppDir/usr/share/icons/hicolor/512x512/apps/
+cp macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_512.png AppDir/usr/share/icons/hicolor/512x512/apps/atcd_choreo_sync.png
 mkdir -p AppDir/usr/share/icons/hicolor/64x64/apps/
-cp macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_64.png AppDir/usr/share/icons/hicolor/64x64/apps/
+cp macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_64.png AppDir/usr/share/icons/hicolor/64x64/apps/atcd_choreo_sync.png
 
 # Swap AppRun binary with custom script
 cp linux/AppRun AppDir/AppRun
