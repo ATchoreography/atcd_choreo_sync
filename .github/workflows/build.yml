@@ -58,13 +58,21 @@ jobs:
         run: |
           flutter config --enable-windows-desktop
           flutter build windows
-          curl https://github.com/tekartik/sqflite/raw/master/sqflite_common_ffi/lib/src/windows/sqlite3.dll > build/windows/runner/Release/sqlite3.dll
-               
+          mkdir outputs/
+          mv build/windows/runner/Release/ outputs/atcd_choreo_sync
+          # Get sqlite3
+          curl https://github.com/tekartik/sqflite/raw/master/sqflite_common_ffi/lib/src/windows/sqlite3.dll > outputs/atcd_choreo_sync/sqlite3.dll
+          # Get 7-Zip
+          curl https://www.7-zip.org/a/7z2107-extra.7z > 7z.7z
+          7z x 7z.7z
+          cp 7za.exe outputs/atcd_choreo_sync
+          cp License.txt "outputs/atcd_choreo_sync/7-Zip License.txt"
+ 
       - name: Upload build
         uses: actions/upload-artifact@v3.0.0
         with:
           name: app_windows
-          path: build/windows/runner/Release/
+          path: outputs/
 
   build-linux:
     name: "Linux AppImage"
