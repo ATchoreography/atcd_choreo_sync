@@ -24,19 +24,19 @@ jobs:
         run: flutter config --enable-windows-desktop
       
       - name: Download Dart/Flutter dependencies
-        run: cd atcd_choreo_sync && flutter pub get
+        run: flutter pub get
         
       - name: Build Windows application
-        run: cd atcd_choreo_sync && flutter build windows
+        run: flutter build windows
 
       - name: Sprinkle in some SQLite3 magic
         shell: bash
         run: |
-          curl https://github.com/tekartik/sqflite/raw/master/sqflite_common_ffi/lib/src/windows/sqlite3.dll > atcd_choreo_sync/build/windows/runner/Release/sqlite3.dll
+          curl https://github.com/tekartik/sqflite/raw/master/sqflite_common_ffi/lib/src/windows/sqlite3.dll > build/windows/runner/Release/sqlite3.dll
                
       - name: Upload build
         uses: actions/upload-artifact@v3.0.0
         with:
           name: app_windows
-          path: atcd_choreo_sync/build/windows/runner/Release/
+          path: build/windows/runner/Release/
           

@@ -7,13 +7,6 @@ the [Audio Trip Choreography Discord](https://atcd.club).
 
 ## Building
 
-On all platforms, fetch the dependencies first:
-
-```bash
-cd atcd_choreo_sync
-flutter pub get
-`````
-
 ### Quest / Android
 
 ```bash
