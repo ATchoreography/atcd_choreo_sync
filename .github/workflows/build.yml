@@ -125,11 +125,13 @@ jobs:
         run: |
           flutter config --enable-macos-desktop
           flutter build macos
+          mkdir outputs
+          mv 'build/macos/Build/Products/Release/ATCD Choreography Sync.app' outputs/
                
       - name: Upload build
         uses: actions/upload-artifact@v3.0.0
         with:
           name: app_macos
-          path: build/macos/Build/Products/Release/
+          path: outputs/
 
 
