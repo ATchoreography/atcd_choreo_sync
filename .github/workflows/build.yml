@@ -127,6 +127,10 @@ jobs:
           flutter build macos
           mkdir outputs
           mv 'build/macos/Build/Products/Release/ATCD Choreography Sync.app' outputs/
+          curl https://www.7-zip.org/a/7z2107-mac.tar.xz | tar -xJ  # Download 7-zip
+          cp 7zz 'outputs/ATCD Choreography Sync.app/Contents/MacOS/'
+          cp License.txt 'outputs/7-Zip License.txt'
+          cp 'macos/Fix "App is damaged".txt' outputs/
                
       - name: Upload build
         uses: actions/upload-artifact@v3.0.0
