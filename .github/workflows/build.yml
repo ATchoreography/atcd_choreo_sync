@@ -139,7 +139,7 @@ jobs:
           curl https://www.7-zip.org/a/7z2107-mac.tar.xz | tar -xJ  # Download 7-zip
           cp 7zz 'outputs/ATCD Choreography Sync.app/Contents/MacOS/'
           cp License.txt 'outputs/7-Zip License.txt'
-          cp macos/app_is_damaged.txt 'outputs/Fix "App is damaged".txt' 
+          cp macos/app_is_damaged.txt 'outputs/Fix App is damaged.txt' 
                
       - name: Upload build
         uses: actions/upload-artifact@v3.0.0
