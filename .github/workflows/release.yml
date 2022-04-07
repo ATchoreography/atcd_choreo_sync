@@ -175,7 +175,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: app_macos
-          path: ./app_macos/
+          path: .
 
       - name: Download Android build
         uses: actions/download-artifact@v3
@@ -195,10 +195,10 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: |
           mkdir outputs
-          mv *AppImage outputs/"atcd_choreo_sync-gnulinux-$TAG.AppImage"
-          mv app_windows "atcd_choreo_sync-windows-$TAG"
-          zip "outputs/atcd_choreo_sync-windows-$TAG.zip" "atcd_choreo_sync-windows-$TAG"
-          zip "outputs/atcd_choreo_sync-macOS-$TAG.zip" app_macos/*
+          mv *AppImage "outputs/atcd_choreo_sync-gnulinux-$TAG.AppImage"
+          mv app_windows/atcd_choreo_sync "atcd_choreo_sync-windows-$TAG"
+          zip -r "outputs/atcd_choreo_sync-windows-$TAG.zip" "atcd_choreo_sync-windows-$TAG"
+          zip -r "outputs/atcd_choreo_sync-macOS-$TAG.zip" "ATCD Choreography Sync.app" "7-Zip License.txt" "Fix App is damaged.txt"
           mv flutter-apk/app-release.apk "outputs/atcd_choreo_sync-OculusQuest-android-$TAG.apk"
 
       - name: Upload binaries to release
