@@ -2,11 +2,13 @@ import 'dart:io';
 
 import 'package:atcd_choreo_sync/7zip/7zip.dart';
 import 'package:atcd_choreo_sync/database.dart';
+import 'package:atcd_choreo_sync/licenses.dart';
 import 'package:atcd_choreo_sync/repositories.dart';
 import 'package:atcd_choreo_sync/settings.dart';
 import 'package:atcd_choreo_sync/spreadsheet.dart';
 import 'package:atcd_choreo_sync/utils.dart';
 import 'package:atcd_choreo_sync/wakelock/wakelock.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:prompt_dialog/prompt_dialog.dart';
@@ -18,6 +20,7 @@ import 'downloads.dart';
 import 'model.dart';
 
 void main() {
+  LicenseRegistry.addLicense(genLicenses);
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const ChoreoSyncApp());
 }
