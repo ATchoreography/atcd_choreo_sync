@@ -82,7 +82,11 @@ class ChoreoListEntry extends StatelessWidget {
           child: Checkbox(
               checkColor: const Color(0xFF000000),
               value: status == DownloadStatus.toDownload,
-              onChanged: (bool? status) async => setShouldDownloadCallback(choreo, status ?? false)),
+              onChanged: isDownloading
+                  ? null
+                  : (bool? status) async {
+                      return setShouldDownloadCallback(choreo, status ?? false);
+                    }),
           width: 48,
           height: 48,
           padding: EdgeInsets.zero,
@@ -110,29 +114,38 @@ class ChoreoListEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.zero,
-      child: Row(mainAxisSize: MainAxisSize.min, children: [
-        _getStatusWidget(),
-        Expanded(
-            child: RichText(
-                text: TextSpan(text: "", style: DefaultTextStyle.of(context).style, children: <TextSpan>[
-          TextSpan(text: choreo.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          const TextSpan(text: " - "),
-          TextSpan(text: choreo.artists, style: const TextStyle(fontWeight: FontWeight.bold)),
-          const TextSpan(text: " "),
-          TextSpan(text: "[${choreo.length}]"),
-          const TextSpan(text: " - "),
-          TextSpan(text: choreo.difficulty),
-          const TextSpan(text: "\n"),
-          const TextSpan(text: "By "),
-          TextSpan(text: choreo.mapper, style: const TextStyle(fontWeight: FontWeight.bold)),
-          TextSpan(text: ", ${choreo.released}"),
-          choreo.bpm != null ? TextSpan(text: " - ${choreo.bpm} bpm") : const TextSpan(),
-          const TextSpan(text: " - "),
-          TextSpan(text: choreo.url.split(".").last)
-        ]))),
-      ]),
+    return InkWell(
+      onTap: isDownloading
+          ? null
+          : () async {
+              if (status != DownloadStatus.present) {
+                await setShouldDownloadCallback(choreo, status != DownloadStatus.toDownload);
+              }
+            },
+      child: Container(
+        padding: EdgeInsets.zero,
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          _getStatusWidget(),
+          Expanded(
+              child: RichText(
+                  text: TextSpan(text: "", style: DefaultTextStyle.of(context).style, children: <TextSpan>[
+            TextSpan(text: choreo.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+            const TextSpan(text: " - "),
+            TextSpan(text: choreo.artists, style: const TextStyle(fontWeight: FontWeight.bold)),
+            const TextSpan(text: " "),
+            TextSpan(text: "[${choreo.length}]"),
+            const TextSpan(text: " - "),
+            TextSpan(text: choreo.difficulty),
+            const TextSpan(text: "\n"),
+            const TextSpan(text: "By "),
+            TextSpan(text: choreo.mapper, style: const TextStyle(fontWeight: FontWeight.bold)),
+            TextSpan(text: ", ${choreo.released}"),
+            choreo.bpm != null ? TextSpan(text: " - ${choreo.bpm} bpm") : const TextSpan(),
+            const TextSpan(text: " - "),
+            TextSpan(text: choreo.url.split(".").last)
+          ]))),
+        ]),
+      ),
     );
   }
 }
