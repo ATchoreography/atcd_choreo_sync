@@ -666,7 +666,7 @@ class _MainWindowState extends State<MainWindow> {
     list.add(FutureBuilder<bool>(
       future: isAudioTripInstalled(),
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        if (!snapshot.hasData || snapshot.hasError) {
+        if (!snapshot.hasData || snapshot.hasError || (snapshot.hasData && !snapshot.data!)) {
           return Container();
         }
         return const TextButton(
