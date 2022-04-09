@@ -1,2 +1,2 @@
-const String versionName = "1.0.0";
-const int versionCode = 1;
+const String versionName = "1.0.1";
+const int versionCode = 2;
