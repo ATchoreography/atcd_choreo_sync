@@ -66,7 +66,6 @@ jobs:
           curl https://www.7-zip.org/a/7z2107-extra.7z > 7z.7z
           7z x 7z.7z
           cp 7za.exe outputs/atcd_choreo_sync
-          cp License.txt "outputs/atcd_choreo_sync/7-Zip License.txt"
  
       - name: Upload build
         uses: actions/upload-artifact@v3.0.0
@@ -105,7 +104,6 @@ jobs:
           ./linux/make_appdir.sh
           # Copy 7zip
           cp 7zzs AppDir/
-          cp License.txt "outputs/7-Zip License.txt"
           # Get appimagetool and build appimage
           curl -L https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage > appimagetool.AppImage
           chmod +x appimagetool.AppImage
@@ -138,7 +136,6 @@ jobs:
           mv 'build/macos/Build/Products/Release/ATCD Choreography Sync.app' outputs/
           curl https://www.7-zip.org/a/7z2107-mac.tar.xz | tar -xJ  # Download 7-zip
           cp 7zz 'outputs/ATCD Choreography Sync.app/Contents/MacOS/'
-          cp License.txt 'outputs/7-Zip License.txt'
           cp macos/app_is_damaged.txt 'outputs/Fix App is damaged.txt' 
                
       - name: Upload build
