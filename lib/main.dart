@@ -118,6 +118,8 @@ class ChoreoListEntry extends StatelessWidget {
           TextSpan(text: choreo.artists, style: const TextStyle(fontWeight: FontWeight.bold)),
           const TextSpan(text: " "),
           TextSpan(text: "[${choreo.length}]"),
+          const TextSpan(text: " - "),
+          TextSpan(text: choreo.difficulty),
           const TextSpan(text: "\n"),
           const TextSpan(text: "By "),
           TextSpan(text: choreo.mapper, style: const TextStyle(fontWeight: FontWeight.bold)),
