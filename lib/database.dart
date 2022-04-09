@@ -1,10 +1,10 @@
 import 'dart:io';
+
+import 'package:mutex/mutex.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:mutex/mutex.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 bool _dbInited = false;
 
@@ -95,6 +95,24 @@ Future closeDB() async {
   try {
     await _dbInstance?.close();
     _dbInstance = null;
+  } finally {
+    _dbMutex.release();
+  }
+}
+
+Future wipeDB() async {
+  await _dbMutex.acquire();
+  try {
+    await _dbInstance?.close();
+    _dbInstance = null;
+
+    final String path = join(await _ensureDBPath(), "db.sqlite3");
+    final dbFile = File(path);
+
+    if (await dbFile.exists()) {
+      print("Database file deleted: $path");
+      await dbFile.delete();
+    }
   } finally {
     _dbMutex.release();
   }

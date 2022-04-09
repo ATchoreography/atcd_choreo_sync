@@ -432,7 +432,9 @@ class _MainWindowState extends State<MainWindow> {
                       final choreosPath = await Settings().ensureChoreosPath;
                       Directory dir = Directory(choreosPath);
                       await dir.delete(recursive: true);
-                      await _loadFromDb();
+                      await wipeDB();
+                      await _loadFromDb(); // Reset list view
+
                       print("Choreos directory wiped");
                       // Close the dialog
                       Navigator.of(context).pop();
