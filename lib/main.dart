@@ -486,8 +486,7 @@ class _MainWindowState extends State<MainWindow> {
 
   _selectAllFilteredMissing() => setState(() {
         for (Choreo choreo in filteredChoreos) {
-          final status = downloadStatus[choreo.id]!;
-          if (status == DownloadStatus.missing) {
+          if (downloadStatus[choreo.id]! == DownloadStatus.missing) {
             downloadStatus[choreo.id!] = DownloadStatus.toDownload;
           }
         }
@@ -495,7 +494,9 @@ class _MainWindowState extends State<MainWindow> {
 
   _deselectAll() => setState(() {
         for (Choreo choreo in filteredChoreos) {
-          downloadStatus[choreo.id!] = DownloadStatus.missing;
+          if (downloadStatus[choreo.id!] == DownloadStatus.toDownload) {
+            downloadStatus[choreo.id!] = DownloadStatus.missing;
+          }
         }
       });
 
