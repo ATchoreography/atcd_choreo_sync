@@ -13,6 +13,7 @@
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="https" />
         </intent>
+        <package android:name="com.KinemotikStudios.AudioTripQuest" />
     </queries>
 
     <application

@@ -12,6 +12,7 @@ import 'package:prompt_dialog/prompt_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'android.dart';
+import 'audiotrip.dart';
 import 'downloads.dart';
 import 'model.dart';
 
@@ -619,6 +620,19 @@ class _MainWindowState extends State<MainWindow> {
 
   List<Widget> _genFooterButtons() {
     List<Widget> list = [];
+
+    list.add(FutureBuilder<bool>(
+      future: isAudioTripInstalled(),
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        if (!snapshot.hasData || snapshot.hasError) {
+          return Container();
+        }
+        return const TextButton(
+          onPressed: launchAudioTrip,
+          child: Text("Launch Audio Trip"),
+        );
+      },
+    ));
 
     if (isDownloading) {
       list.add(TextButton(onPressed: () => {shouldCancelDownload = true}, child: const Text("Stop download")));

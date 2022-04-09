@@ -1,10 +1,13 @@
 import 'dart:ffi';
 import 'dart:io';
 
+import 'package:device_apps/device_apps.dart';
 import 'package:ffi/ffi.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:win32/win32.dart';
+
+const String audioTripPackageName = "com.KinemotikStudios.AudioTripQuest";
 
 // Reference:
 // - https://docs.unity3d.com/ScriptReference/Application-persistentDataPath.html
@@ -30,10 +33,8 @@ String _windowsChoreoPath() {
 Future<String> getChoreosPath() async {
   if (Platform.isLinux || Platform.isMacOS) {
     return join(Platform.environment["HOME"]!, "ATCD Choreo Sync");
-
   } else if (Platform.isWindows) {
     return _windowsChoreoPath();
-
   } else if (Platform.isAndroid) {
     Directory filesDir = (await getExternalStorageDirectory())!;
     List<String> splitFilesPath = split(filesDir.path);
@@ -46,4 +47,20 @@ Future<String> getChoreosPath() async {
     return join(androidPath, "data", "com.KinemotikStudios.AudioTripQuest", "files", "Songs", "ATCD Sync");
   }
   throw UnsupportedError("The current platform is not supported!");
+}
+
+bool? _atInstalledLazyVal;
+
+Future<bool> isAudioTripInstalled() async {
+  if (Platform.isAndroid) {
+    _atInstalledLazyVal ??= await DeviceApps.isAppInstalled(audioTripPackageName);
+    return _atInstalledLazyVal!;
+  }
+  return false;
+}
+
+Future<void> launchAudioTrip() async {
+  if (Platform.isAndroid) {
+    await DeviceApps.openApp(audioTripPackageName);
+  }
 }
