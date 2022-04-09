@@ -89,7 +89,7 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "Davide Depau" "\0"
+            VALUE "CompanyName", "ATCD.club" "\0"
             VALUE "FileDescription", "ATCD Choreography Sync" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "atcd_choreo_sync" "\0"
