@@ -61,7 +61,7 @@ jobs:
           mkdir outputs/
           mv build/windows/runner/Release/ outputs/atcd_choreo_sync
           # Get sqlite3
-          curl https://github.com/tekartik/sqflite/raw/master/sqflite_common_ffi/lib/src/windows/sqlite3.dll > outputs/atcd_choreo_sync/sqlite3.dll
+          curl -L https://raw.githubusercontent.com/tekartik/sqflite/master/sqflite_common_ffi/lib/src/windows/sqlite3.dll > outputs/atcd_choreo_sync/sqlite3.dll
           # Get 7-Zip
           curl https://www.7-zip.org/a/7z2107-extra.7z > 7z.7z
           7z x 7z.7z
