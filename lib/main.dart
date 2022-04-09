@@ -7,6 +7,7 @@ import 'package:atcd_choreo_sync/repositories.dart';
 import 'package:atcd_choreo_sync/settings.dart';
 import 'package:atcd_choreo_sync/spreadsheet.dart';
 import 'package:atcd_choreo_sync/utils.dart';
+import 'package:atcd_choreo_sync/version.dart';
 import 'package:atcd_choreo_sync/wakelock/wakelock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -496,7 +497,7 @@ class _MainWindowState extends State<MainWindow> {
                   showAboutDialog(
                       context: context,
                       applicationName: widget.title,
-                      applicationVersion: "v1.0.0",
+                      applicationVersion: "v$versionName+$versionCode",
                       applicationLegalese: "Copyright © 2022 Davide Depau <davide@depau.eu>\n"
                           "\n"
                           "License: Mozilla Public License version 2.0 or later <https://www.mozilla.org/en-US/MPL/2.0/>\n"
