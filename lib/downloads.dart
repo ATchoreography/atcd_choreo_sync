@@ -72,20 +72,31 @@ Future<List<String>> downloadChoreo(Choreo choreo) async {
   final choreoPath = await Settings().ensureChoreosPath;
   Uri uri = Uri.parse(choreo.url);
   String filename = uri.pathSegments.last;
+  bool isArchive = !filename.endsWith(".ats");
 
-  String archivePath = join((await getTemporaryDirectory()).path, choreo.id!.toString() + "-" + filename);
+  String downloadPath;
+
+  if (isArchive) {
+    downloadPath = join((await getTemporaryDirectory()).path, choreo.id!.toString() + "-" + filename);
+  } else {
+    downloadPath = join(choreoPath, filename);
+  }
 
   Dio porco = Dio(); // lol
-  await porco.download(choreo.url, archivePath);
+  await porco.download(choreo.url, downloadPath);
 
-  try {
-    if (archivePath.toLowerCase().endsWith(".zip")) {
-      return await extractZip(choreoPath, archivePath);
-    } else {
-      return await extract7zip(choreoPath, archivePath);
+  if (isArchive) {
+    try {
+      if (downloadPath.toLowerCase().endsWith(".zip")) {
+        return await extractZip(choreoPath, downloadPath);
+      } else {
+        return await extract7zip(choreoPath, downloadPath);
+      }
+    } finally {
+      await File(downloadPath).delete();
     }
-  } finally {
-    await File(archivePath).delete();
+  } else {
+    return [filename];
   }
 }
 
