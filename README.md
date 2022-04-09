@@ -109,6 +109,22 @@ chmod +x appimagetool-x86_64.AppImage
 ARCH=x86_64 ./appimagetool-x86_64.AppImage AppDir './outputs/atcd_choreo_sync.AppImage'
 ```
 
+### Android Gradle sync issues
+
+If Gradle fails mysteriously for unknown reasons, it may be because you're missing some Android SDK
+platforms. To find out which ones, you can look for `SdkPlatformNotFoundException` in
+the `idea.log` (if Gradle sync fails there should be a button to open the log)
+
+```bash
+$ grep -r 'com.android.tools.idea.gradle.project.sync.idea.issues.SdkPlatformNotFoundException' \
+  ~/.cache/Google/AndroidStudio*/log/idea.log
+
+com.android.tools.idea.gradle.project.sync.idea.issues.SdkPlatformNotFoundException: Module: 'sqlite3_flutter_libs' platform 'android-28' not found.
+com.android.tools.idea.gradle.project.sync.idea.issues.SdkPlatformNotFoundException: Module: 'device_apps' platform 'android-30' not found.
+```
+
+Install them manually from the SDK manager.
+
 ## License
 
 Mozilla Public License v2.0
