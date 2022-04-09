@@ -127,7 +127,7 @@ Stream<String> getArchiveFileListWithExe(String z7exe, String archivePath) async
       continue;
     }
     if (line.startsWith("Path = ")) {
-      yield line.replaceFirst("Path = ", "");
+      yield split(line.replaceFirst("Path = ", "")).last;
     }
   }
   int exitCode = await process.exitCode;
@@ -137,7 +137,7 @@ Stream<String> getArchiveFileListWithExe(String z7exe, String archivePath) async
 }
 
 Future extractArchiveWithExe(String z7exe, String archivePath, String outputDir) async {
-  final args = ["x", archivePath, "-y", "-bd", "-o" + outputDir];
+  final args = ["e", archivePath, "-y", "-bd", "-o" + outputDir];
   var process = await Process.run(z7exe, args);
   if (process.exitCode != 0) {
     throw ProcessException(

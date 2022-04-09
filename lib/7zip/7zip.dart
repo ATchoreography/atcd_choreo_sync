@@ -26,7 +26,7 @@ Future<List<String>> extract7zip(
 
   String z7exe = (await find7zExecutable())!;
 
-  List<String> fileList = await getArchiveFileListWithExe(z7exe, archivePath).toList();
+  List<String> fileList = (await getArchiveFileListWithExe(z7exe, archivePath).toSet()).toList();
   await extractArchiveWithExe(z7exe, archivePath, outputDir);
 
   return fileList;
