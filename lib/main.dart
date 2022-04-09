@@ -149,7 +149,7 @@ enum PopupMenuCommands {
   showAll,
   showDownloadedOnly,
   showMissingOnly,
-  clearDownloadLocation,
+  wipeDownloadFolder,
   settingsCsvUrl,
   settingsDownloadLocation,
   settings7zipDirectory,
@@ -407,10 +407,41 @@ class _MainWindowState extends State<MainWindow> {
   }
 
   _clearDownloadLocation() async {
-    final choreosPath = await Settings().ensureChoreosPath;
-    Directory dir = Directory(choreosPath);
-    await dir.delete(recursive: true);
-    await _loadFromDb();
+    final String choreoPath = await Settings().ensureChoreosPath;
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+              title: const Text('Wipe downloads folder'),
+              content: RichText(
+                  text: TextSpan(text: "", children: <TextSpan>[
+                const TextSpan(
+                    text: "Do you want to delete all files in the choreographies folder, including any files "),
+                const TextSpan(text: "NOT", style: TextStyle(fontWeight: FontWeight.bold)),
+                const TextSpan(text: " downloaded by this app?\n"),
+                const TextSpan(text: "The configured choreography folder is:\n\n"),
+                TextSpan(text: choreoPath, style: const TextStyle(fontFamily: "monospace")),
+              ])),
+              actions: [
+                TextButton(
+                    onPressed: () async {
+                      final choreosPath = await Settings().ensureChoreosPath;
+                      Directory dir = Directory(choreosPath);
+                      await dir.delete(recursive: true);
+                      await _loadFromDb();
+                      print("Choreos directory wiped");
+                      // Close the dialog
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Yes, delete all files')),
+                TextButton(
+                    onPressed: () {
+                      // Close the dialog
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('No, cancel')),
+              ]);
+        });
   }
 
   _selectAllFilteredMissing() => setState(() {
@@ -450,7 +481,7 @@ class _MainWindowState extends State<MainWindow> {
                 case PopupMenuCommands.atcdClubLink:
                   await launch("https://www.atcd.club");
                   break;
-                case PopupMenuCommands.clearDownloadLocation:
+                case PopupMenuCommands.wipeDownloadFolder:
                   await _clearDownloadLocation();
                   break;
                 case PopupMenuCommands.settingsCsvUrl:
@@ -611,13 +642,13 @@ class _MainWindowState extends State<MainWindow> {
                   ),
                   const PopupMenuDivider(),
                   const PopupMenuItem(child: Text("Actions"), enabled: false, height: 30),
-                  const PopupMenuItem(value: PopupMenuCommands.aboutDialog, child: Text("About app…")),
-                  const PopupMenuItem(value: PopupMenuCommands.atcdClubLink, child: Text("Visit atcd.club…")),
                   PopupMenuItem(
-                    value: PopupMenuCommands.clearDownloadLocation,
-                    child: const Text("Wipe downloads folder"),
+                    value: PopupMenuCommands.wipeDownloadFolder,
+                    child: const Text("Wipe downloads folder…"),
                     enabled: !isDownloading,
                   ),
+                  const PopupMenuItem(value: PopupMenuCommands.atcdClubLink, child: Text("Visit atcd.club…")),
+                  const PopupMenuItem(value: PopupMenuCommands.aboutDialog, child: Text("About app…")),
                 ],
           ),
         ],
