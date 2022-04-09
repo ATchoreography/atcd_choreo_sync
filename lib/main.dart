@@ -125,6 +125,8 @@ class ChoreoListEntry extends StatelessWidget {
           TextSpan(text: choreo.mapper, style: const TextStyle(fontWeight: FontWeight.bold)),
           TextSpan(text: ", ${choreo.released}"),
           choreo.bpm != null ? TextSpan(text: " - ${choreo.bpm} bpm") : const TextSpan(),
+          const TextSpan(text: " - "),
+          TextSpan(text: choreo.url.split(".").last)
         ]))),
       ]),
     );
