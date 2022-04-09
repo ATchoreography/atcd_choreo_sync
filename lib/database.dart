@@ -117,3 +117,11 @@ Future wipeDB() async {
     _dbMutex.release();
   }
 }
+
+Future testDB() async {
+  try {
+    await openDB();
+  } finally {
+    await closeDB();
+  }
+}

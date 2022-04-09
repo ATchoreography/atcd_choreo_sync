@@ -341,6 +341,23 @@ class _MainWindowState extends State<MainWindow> {
         }
 
         await ensureStoragePermission();
+
+        try {
+          await testDB();
+        } catch (e) {
+          showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (BuildContext ctx) {
+                return AlertDialog(
+                    title: const Text('Error loading app database'),
+                    content: Text(
+                        "The 'sqlite3.dll' library required for the internal database is missing or damaged. The app cannot operate.\n\nError:\n${e.toString()}"),
+                    actions: const []);
+              });
+          rethrow;
+        }
+
         await _loadFromDb();
 
         initialized = true;
