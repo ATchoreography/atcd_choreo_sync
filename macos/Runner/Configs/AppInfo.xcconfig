@@ -8,7 +8,7 @@
 PRODUCT_NAME = ATCD Choreography Sync
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = gay.depau.atcdChoreoSync
+PRODUCT_BUNDLE_IDENTIFIER = club.atcd.choreoSync
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2022 Davide Depau. All rights reserved.

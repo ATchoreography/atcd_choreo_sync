@@ -1,9 +1,9 @@
-package gay.depau.atcd_choreo_sync
+package club.atcd.choreo_sync
 
 import android.os.Bundle
 import android.os.PersistableBundle
-import gay.depau.atcd_choreo_sync.p7zip.P7ZipExtractorAndroidImpl
-import gay.depau.atcd_choreo_sync.p7zip.P7ZipExtractorPigeon
+import club.atcd.choreo_sync.p7zip.P7ZipExtractorAndroidImpl
+import club.atcd.choreo_sync.p7zip.P7ZipExtractorPigeon
 import io.flutter.Log
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine

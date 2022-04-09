@@ -14,8 +14,8 @@ strip AppDir/atcd_choreo_sync
 
 # Set up desktop files
 mkdir -p AppDir/usr/share/applications
-cp linux/atcd_choreo_sync.desktop AppDir/gay.depau.atcd_choreo_sync.desktop
-cp linux/atcd_choreo_sync.desktop AppDir/usr/share/applications/gay.depau.atcd_choreo_sync.desktop
+cp linux/atcd_choreo_sync.desktop AppDir/club.atcd.choreo_sync.desktop
+cp linux/atcd_choreo_sync.desktop AppDir/usr/share/applications/club.atcd.choreo_sync.desktop
 
 # Set up main icon
 cp macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_512.png AppDir/atcd_choreo_sync.png

@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="gay.depau.atcd_choreo_sync">
+    package="club.atcd.choreo_sync">
 
     <uses-permission android:name="android.permission.INTERNET" />
 

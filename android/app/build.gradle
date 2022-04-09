@@ -48,7 +48,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "gay.depau.atcd_choreo_sync"
+        applicationId "club.atcd.choreo_sync"
         minSdkVersion flutter.minSdkVersion
         //noinspection OldTargetApi
         targetSdkVersion 31 // flutter.targetSdkVersion

@@ -1,5 +1,5 @@
 -dontobfuscate
--keep class gay.depau.atcd_choreo_sync.** { *; }
--keep class gay.depau.atcd_choreo_sync.p7zip.** { *; }
+-keep class club.atcd.choreo_sync.** { *; }
+-keep class club.atcd.choreo_sync.p7zip.** { *; }
 -keep class io.flutter.plugins.** { *; }
 -keep class com.hzy.lib7z.** { *; }

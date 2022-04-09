@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "gay.depau" "\0"
-            VALUE "FileDescription", "atcd_choreo_sync" "\0"
+            VALUE "CompanyName", "Davide Depau" "\0"
+            VALUE "FileDescription", "ATCD Choreography Sync" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "atcd_choreo_sync" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2022 gay.depau. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2022 Davide Depau. All rights reserved." "\0"
             VALUE "OriginalFilename", "atcd_choreo_sync.exe" "\0"
-            VALUE "ProductName", "atcd_choreo_sync" "\0"
+            VALUE "ProductName", "ATCD Choreography Sync" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

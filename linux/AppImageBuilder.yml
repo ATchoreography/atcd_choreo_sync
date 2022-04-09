@@ -5,7 +5,7 @@ script:
 AppDir:
   path: ./AppDir
   app_info:
-    id: gay.depau.atcd_choreo_sync
+    id: club.atcd.choreo_sync
     name: ATCD Choreography Sync
     icon: atcd_choreo_sync
     version: 1.0.0

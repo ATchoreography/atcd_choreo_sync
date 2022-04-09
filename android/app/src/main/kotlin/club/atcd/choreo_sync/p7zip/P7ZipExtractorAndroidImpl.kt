@@ -1,4 +1,4 @@
-package gay.depau.atcd_choreo_sync.p7zip
+package club.atcd.choreo_sync.p7zip
 
 import com.hzy.lib7z.ErrorCode
 import com.hzy.lib7z.IExtractCallback

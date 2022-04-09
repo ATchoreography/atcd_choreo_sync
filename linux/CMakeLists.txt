@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(runner LANGUAGES CXX)
 
 set(BINARY_NAME "atcd_choreo_sync")
-set(APPLICATION_ID "gay.depau.atcd_choreo_sync")
+set(APPLICATION_ID "club.atcd.choreo_sync")
 
 cmake_policy(SET CMP0063 NEW)
 
