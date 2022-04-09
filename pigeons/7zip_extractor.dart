@@ -5,7 +5,7 @@ import 'package:pigeon/pigeon.dart';
 /// flutter pub run pigeon \
 ///   --input pigeons/7zip_extractor.dart \
 ///   --dart_out lib/7zip/android_pigeon.dart \
-///   --java_out android/app/src/main/java/club.atcd.choreo_sync/p7zip/P7ZipExtractorPigeon.java \
+///   --java_out android/app/src/main/java/club/atcd/choreo_sync/p7zip/P7ZipExtractorPigeon.java \
 ///   --java_package club.atcd.choreo_sync.p7zip
 
 @HostApi

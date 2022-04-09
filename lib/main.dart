@@ -6,6 +6,7 @@ import 'package:atcd_choreo_sync/repositories.dart';
 import 'package:atcd_choreo_sync/settings.dart';
 import 'package:atcd_choreo_sync/spreadsheet.dart';
 import 'package:atcd_choreo_sync/utils.dart';
+import 'package:atcd_choreo_sync/wakelock/wakelock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:prompt_dialog/prompt_dialog.dart';
@@ -356,6 +357,9 @@ class _MainWindowState extends State<MainWindow> {
     });
 
     try {
+      // Assume 30 seconds for each song to download as an upper limit
+      await acquireWakelock(30 * toDownloadCount * 1000);
+
       List<Choreo> toDownload = choreos;
       toDownload.sort(_choreoComparator);
 
@@ -397,6 +401,7 @@ class _MainWindowState extends State<MainWindow> {
       setState(() {
         isDownloading = false;
       });
+      await releaseWakelock();
       await closeDB();
     }
   }
