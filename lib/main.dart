@@ -186,6 +186,7 @@ class _MainWindowState extends State<MainWindow> {
   bool initialized = false;
   bool has7zip = Platform.isAndroid;
   bool isDownloading = false;
+  bool isRefreshing = false;
   bool shouldCancelDownload = false;
   List<Choreo> choreos = [];
   List<Choreo> filteredChoreos = [];
@@ -301,8 +302,17 @@ class _MainWindowState extends State<MainWindow> {
   Future _doRefresh() async => _refreshIndicatorKey.currentState?.show();
 
   Future _onRefresh() async {
-    if (isDownloading) return;
-    return _syncSpreadsheet();
+    if (isDownloading || isRefreshing) return;
+    setState(() {
+      isRefreshing = true;
+    });
+    try {
+      return await _syncSpreadsheet();
+    } finally {
+      setState(() {
+        isRefreshing = false;
+      });
+    }
   }
 
   Future _setShouldDownload(Choreo choreo, bool value) async {
@@ -330,7 +340,7 @@ class _MainWindowState extends State<MainWindow> {
     return ChoreoListEntry(
         choreo: filteredChoreos[index],
         status: downloadStatus[filteredChoreos[index].id]!,
-        isDownloading: isDownloading,
+        isDownloading: isDownloading || isRefreshing,
         setShouldDownloadCallback: _setShouldDownload,
         deleteCallback: _deleteChoreo);
   }
@@ -686,7 +696,7 @@ class _MainWindowState extends State<MainWindow> {
                   PopupMenuItem(
                     value: PopupMenuCommands.wipeDownloadFolder,
                     child: const Text("Wipe downloads folder…"),
-                    enabled: !isDownloading,
+                    enabled: !isDownloading && !isRefreshing,
                   ),
                   const PopupMenuItem(value: PopupMenuCommands.atcdClubLink, child: Text("Visit atcd.club…")),
                   const PopupMenuItem(value: PopupMenuCommands.aboutDialog, child: Text("About app…")),
@@ -711,8 +721,10 @@ class _MainWindowState extends State<MainWindow> {
       },
     ));
 
-    if (isDownloading) {
-      list.add(TextButton(onPressed: () => {shouldCancelDownload = true}, child: const Text("Stop download")));
+    if (isDownloading || isRefreshing) {
+      if (isDownloading) {
+        list.add(TextButton(onPressed: () => {shouldCancelDownload = true}, child: const Text("Stop download")));
+      }
       var progress = toDownloadCount == 0 ? null : downloadedCount.toDouble() / toDownloadCount.toDouble();
       // Make sure the progress indicator is visible by making it indeterminate initially
       if (progress != null && progress < 0.01) {
@@ -769,7 +781,7 @@ class _MainWindowState extends State<MainWindow> {
           ),
         ),
       ),
-      floatingActionButton: !isDownloading
+      floatingActionButton: !isDownloading && !isRefreshing
           ? FloatingActionButton(
               onPressed: _doRefresh,
               tooltip: 'Refresh choreos',
