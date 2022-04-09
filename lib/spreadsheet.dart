@@ -82,6 +82,10 @@ Stream<Choreo> fetchChoreos({bool has7zip = false}) async* {
     if (!url.startsWith("https://")) {
       continue;
     }
+    // Only allow these file formats
+    if (!url.endsWith(".zip") && !url.endsWith(".7z") && !url.endsWith(".ats")) {
+      continue;
+    }
     if (!has7zip && url.endsWith(".7z")) {
       continue;
     }
