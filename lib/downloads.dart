@@ -82,8 +82,8 @@ Future<List<String>> downloadChoreo(Choreo choreo) async {
     downloadPath = join(choreoPath, filename);
   }
 
-  Dio porco = Dio(); // lol
-  await porco.download(choreo.url, downloadPath);
+  final downloader = Dio(); // lol
+  await downloader.download(choreo.url, downloadPath);
 
   if (isArchive) {
     try {

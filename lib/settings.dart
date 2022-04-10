@@ -75,4 +75,14 @@ class Settings {
       await (await _prefs).setString("7zip_install_path", value);
     }
   }
+
+  Future<bool?> get autoUpdateEnabled async => (await _prefs).getBool("autoupdate");
+
+  setAutoUpdate(bool? value) async {
+    if (value != null) {
+      await (await _prefs).setBool("autoupdate", value);
+    } else {
+      await (await _prefs).remove("autoupdate");
+    }
+  }
 }
