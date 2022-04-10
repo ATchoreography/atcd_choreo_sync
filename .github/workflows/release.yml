@@ -148,6 +148,29 @@ jobs:
           name: app_macos
           path: outputs/
 
+  gen-release-info:
+    name: "Release information"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '2.10.4'
+
+      - name: Generate release info
+        run: |
+          flutter pub get
+          dart run ./gen_release_info.dart ./pubspec.yaml release_info.json
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: release_info
+          path: release_info.json
+
   release:
     name: "Upload release binaries"
     runs-on: ubuntu-latest
@@ -156,11 +179,18 @@ jobs:
       - build-windows
       - build-linux
       - build-macos
+      - gen-release-info
     steps:
       - name: Setup
         run: |
           mkdir app_windows
           mkdir app_macos
+
+      - name: Download release info
+        uses: actions/download-artifact@v3
+        with:
+          name: release_info
+          path: .
 
       - name: Download Windows build
         uses: actions/download-artifact@v3
@@ -192,6 +222,7 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: |
           mkdir outputs
+          mv release_info.json outputs/
           mv *AppImage "outputs/atcd_choreo_sync-gnulinux-$TAG.AppImage"
           mv app_windows/atcd_choreo_sync "atcd_choreo_sync-windows-$TAG"
           zip -r "outputs/atcd_choreo_sync-windows-$TAG.zip" "atcd_choreo_sync-windows-$TAG"
