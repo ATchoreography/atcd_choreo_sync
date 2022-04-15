@@ -92,6 +92,12 @@ Stream<Choreo> fetchChoreos({bool has7zip = false}) async* {
 
     try {
       String title = row[titleCol].toString().trim();
+
+      // It's kinda annoying <3
+      if (title == "Lovery Boy" && row[mapperCol].toString().trim() == "Davide Depau") {
+        title = "Lover Boy";
+      }
+
       if (row[warningsCol].toString().trim().isNotEmpty) {
         title += " " + row[warningsCol];
       }
