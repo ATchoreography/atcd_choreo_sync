@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:android_intent_plus/android_intent.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +10,8 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'version.dart' as appVersion;
+import 'apkinstaller.dart';
+import 'version.dart' as app_version;
 
 final Uri _releaseInfoUrl =
     Uri.parse("https://github.com/Depau/atcd_choreo_sync/releases/latest/download/release_info.json");
@@ -33,8 +33,48 @@ class UpdateAction {
     }
   }
 
+  Future _showApkPermissionsDialog(BuildContext context) async {
+    var installer = APKInstallerAndroid();
+    if (await installer.hasPermission()) return;
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext ctx) => AlertDialog(
+        title: const Text("Permissions required"),
+        content:
+            const Text("Additional permissions are required to install app updates. Please grant them in Settings."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+              onPressed: () async {
+                await installer.launchPermissionsSettingsPage();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Open Settings…')),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> ensurePrerequisites(BuildContext context) async {
+    if (!Platform.isAndroid) {
+      return true;
+    }
+
+    var installer = APKInstallerAndroid();
+    if (await installer.hasPermission()) {
+      return true;
+    }
+
+    await _showApkPermissionsDialog(context);
+    return false;
+  }
+
   Future perform(BuildContext context) async {
-    if (false /*Platform.isAndroid*/) {
+    if (Platform.isAndroid) {
       Directory destDir = await getExternalStorageDirectory() ?? Directory("/sdcard/Download");
       if (!await destDir.exists()) {
         await destDir.create(recursive: true);
@@ -61,13 +101,11 @@ class UpdateAction {
         final downloader = Dio();
         await downloader.download(releaseInfo["downloads"]["android"], destPath);
 
-        // Launch install intent
-        AndroidIntent intent = AndroidIntent(
-          action: "action_view",
-          data: "file://$destPath",
-          type: "application/vnd.android.package-archive",
-        );
-        await intent.launch();
+        var installer = APKInstallerAndroid();
+        await installer.installApk(destPath);
+
+        // Close dialog
+        Navigator.of(context).pop();
       } catch (e, st) {
         print(st);
         // Close app
@@ -91,7 +129,7 @@ Future<UpdateAction?> checkUpdatesAndGetAction() async {
   final releaseInfo = json.decode(resp.body);
   final int versionCode = releaseInfo["versionCode"];
 
-  if (versionCode <= appVersion.versionCode) {
+  if (versionCode <= app_version.versionCode) {
     print("Running the latest version");
     return null;
   }

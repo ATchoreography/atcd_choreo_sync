@@ -358,7 +358,13 @@ class _MainWindowState extends State<MainWindow> {
       duration: const Duration(seconds: 180),
       action: SnackBarAction(
         label: action.name,
-        onPressed: () async => await action.perform(context),
+        onPressed: () async {
+          if (!await action.ensurePrerequisites(context)) {
+            // Re-run after permissions are granted
+            unawaited(_autoUpdateCheck());
+          }
+          return await action.perform(context);
+        },
       ),
     ));
     return true;

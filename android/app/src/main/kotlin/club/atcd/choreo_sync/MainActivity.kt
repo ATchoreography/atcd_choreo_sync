@@ -1,5 +1,6 @@
 package club.atcd.choreo_sync
 
+import club.atcd.choreo_sync.apkinstaller.APKInstallerImpl
 import club.atcd.choreo_sync.p7zip.P7ZipExtractorAndroidImpl
 import club.atcd.choreo_sync.wakelock.WakelockAndroidImpl
 import io.flutter.Log
@@ -12,7 +13,8 @@ class MainActivity : FlutterActivity() {
 
         val plugins = listOf(
             P7ZipExtractorAndroidImpl(),
-            WakelockAndroidImpl(context)
+            WakelockAndroidImpl(this),
+            APKInstallerImpl(this)
         )
 
         for (plugin in plugins) {
