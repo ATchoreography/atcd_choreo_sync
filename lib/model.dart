@@ -67,12 +67,18 @@ class Choreo extends ModelObject {
     if (!has7zip && url.toLowerCase().endsWith(".7z")) {
       return false;
     }
-    query = query.toLowerCase();
-    return title.toLowerCase().contains(query) ||
-        artists.toLowerCase().contains(query) ||
-        mapper.toLowerCase().contains(query) ||
-        difficulty.toLowerCase().contains(query) ||
-        released.toLowerCase().contains(query);
+
+    List<String> queryParts = query.toLowerCase().split(" ");
+    for (String part in queryParts) {
+      if (!(title.toLowerCase().contains(part) ||
+          artists.toLowerCase().contains(part) ||
+          mapper.toLowerCase().contains(part) ||
+          difficulty.toLowerCase().contains(part) ||
+          released.toLowerCase().contains(part))) {
+        return false;
+      }
+    }
+    return true;
   }
 }
 
