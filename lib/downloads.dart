@@ -3,6 +3,7 @@ import 'dart:isolate';
 
 import 'package:archive/archive_io.dart';
 import 'package:atcd_choreo_sync/7zip/7zip.dart';
+import 'package:atcd_choreo_sync/platform/platform.dart';
 import 'package:atcd_choreo_sync/repositories.dart';
 import 'package:atcd_choreo_sync/settings.dart';
 import 'package:dio/dio.dart';
@@ -13,8 +14,20 @@ import 'package:tuple/tuple.dart';
 
 import 'model.dart';
 
-Future<Map<int, DownloadStatus>> genDownloadStatusMap(List<Choreo> choreos, Database db) async {
+Future<Map<int, DownloadStatus>> genDownloadStatusMap(List<Choreo> choreos, Database? db) async {
   Map<int, DownloadStatus> result = {};
+
+  if (db == null) {
+    assertWeb();
+
+    for (Choreo choreo in choreos) {
+      result[choreo.id!] = DownloadStatus.missing;
+    }
+    return result;
+  }
+
+  assertNative();
+
   var filerepo = ChoreoFileRepository(db);
   final choreoPath = await Settings().ensureChoreosPath;
 

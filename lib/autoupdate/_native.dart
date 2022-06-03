@@ -1,30 +1,20 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
+import 'package:atcd_choreo_sync/autoupdate/update_action_base.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'apkinstaller.dart';
-import 'version.dart' as app_version;
 
-final Uri _releaseInfoUrl =
-    Uri.parse("https://github.com/Depau/atcd_choreo_sync/releases/latest/download/release_info.json");
+class UpdateAction extends UpdateActionBase {
+  UpdateAction(Map<String, dynamic> releaseInfo) : super(releaseInfo);
 
-class UpdateAction {
-  final Map<String, dynamic> releaseInfo;
-
-  UpdateAction(this.releaseInfo);
-
-  String get version {
-    return releaseInfo["versionName"];
-  }
-
+  @override
   String get name {
     if (Platform.isAndroid) {
       return "Install";
@@ -59,6 +49,7 @@ class UpdateAction {
     );
   }
 
+  @override
   Future<bool> ensurePrerequisites(BuildContext context) async {
     if (!Platform.isAndroid) {
       return true;
@@ -73,6 +64,7 @@ class UpdateAction {
     return false;
   }
 
+  @override
   Future perform(BuildContext context) async {
     if (Platform.isAndroid) {
       Directory destDir = await getExternalStorageDirectory() ?? Directory("/sdcard/Download");
@@ -115,24 +107,4 @@ class UpdateAction {
       await launch(releaseInfo["releasePage"]);
     }
   }
-}
-
-Future<UpdateAction?> checkUpdatesAndGetAction() async {
-  print("Performing update check");
-  final resp = await http.get(_releaseInfoUrl);
-
-  if (resp.statusCode != 200) {
-    print("Update check failed: ${resp.statusCode}\n${resp.body}");
-    return null;
-  }
-
-  final releaseInfo = json.decode(resp.body);
-  final int versionCode = releaseInfo["versionCode"];
-
-  if (versionCode <= app_version.versionCode) {
-    print("Running the latest version");
-    return null;
-  }
-
-  return UpdateAction(releaseInfo);
 }

@@ -1,26 +1,25 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:atcd_choreo_sync/7zip/7zip.dart';
-import 'package:atcd_choreo_sync/database.dart';
+import 'package:atcd_choreo_sync/android/android.dart';
+import 'package:atcd_choreo_sync/audiotrip/audiotrip.dart';
+import 'package:atcd_choreo_sync/autoupdate/autoupdate.dart';
+import 'package:atcd_choreo_sync/database/database.dart';
+import 'package:atcd_choreo_sync/downloads.dart';
 import 'package:atcd_choreo_sync/licenses.dart';
+import 'package:atcd_choreo_sync/model.dart';
+import 'package:atcd_choreo_sync/platform/platform.dart';
 import 'package:atcd_choreo_sync/repositories.dart';
 import 'package:atcd_choreo_sync/settings.dart';
 import 'package:atcd_choreo_sync/spreadsheet.dart';
-import 'package:atcd_choreo_sync/utils.dart';
+import 'package:atcd_choreo_sync/utils/utils.dart';
 import 'package:atcd_choreo_sync/version.dart';
-import 'package:atcd_choreo_sync/wakelock/wakelock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:prompt_dialog/prompt_dialog.dart';
+import 'package:sqflite/sqlite_api.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'android.dart';
-import 'audiotrip.dart';
-import 'autoupdate.dart';
-import 'downloads.dart';
-import 'model.dart';
 
 void main() {
   LicenseRegistry.addLicense(genLicenses);
@@ -186,7 +185,7 @@ class _MainWindowState extends State<MainWindow> {
 
   String filterQuery = "";
   bool initialized = false;
-  bool has7zip = Platform.isAndroid;
+  bool has7zip = targetOS == TargetOS.android;
   bool isDownloading = false;
   bool isRefreshing = false;
   bool shouldCancelDownload = false;
@@ -271,12 +270,17 @@ class _MainWindowState extends State<MainWindow> {
   }
 
   _setChoreos(List<Choreo> newChoreos, Map<int, DownloadStatus> statusMap) => setState(() {
-    choreos = newChoreos;
-    _filterSortChoreos();
-    downloadStatus = statusMap;
-  });
+        choreos = newChoreos;
+        _filterSortChoreos();
+        downloadStatus = statusMap;
+      });
 
-  Future _loadFromDb() async {
+  Future _reloadFromStorage() async {
+    if (targetOS == TargetOS.web) {
+      print("Reload from DB called");
+      return;
+    }
+
     final db = await openDB();
     try {
       final repo = ChoreoRepository(db);
@@ -289,16 +293,31 @@ class _MainWindowState extends State<MainWindow> {
 
   Future _syncSpreadsheet() async {
     has7zip = await is7zipAvailable(); // Check again
+    Database? db;
 
-    List<Choreo> newChoreos = [];
-    final db = await openDB();
     try {
-      await for (Choreo choreo in persistToDatabase(fetchChoreos(has7zip: has7zip), db)) {
+      if (targetOS != TargetOS.web) {
+        db = await openDB();
+      }
+
+      Stream<Choreo> choreos = fetchChoreos(has7zip: has7zip);
+      List<Choreo> newChoreos = [];
+
+      if (targetOS != TargetOS.web) {
+        // Only persist if we're not on web
+        choreos = persistToDatabase(choreos, db!);
+      } else {
+        choreos = assignIncrementalIDs(choreos);
+      }
+
+      await for (Choreo choreo in choreos) {
         newChoreos.add(choreo);
       }
       _setChoreos(newChoreos, await genDownloadStatusMap(newChoreos, db));
     } finally {
-      await closeDB();
+      if (db != null) {
+        await closeDB();
+      }
     }
   }
 
@@ -399,9 +418,9 @@ class _MainWindowState extends State<MainWindow> {
 
         sortBy = await Settings().sortBy;
         sortDirection = await Settings().sortDirection;
-        autoUpdateEnabled = await Settings().autoUpdateEnabled ?? false;
+        autoUpdateEnabled = targetOS == TargetOS.web || (await Settings().autoUpdateEnabled ?? false);
 
-        if (!await is7zipAvailable()) {
+        if (targetOS != TargetOS.web && !await is7zipAvailable()) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: const Text("7-Zip is not installed. You will not be able to download 7z choreos"),
             duration: const Duration(seconds: 10),
@@ -418,25 +437,27 @@ class _MainWindowState extends State<MainWindow> {
         await _autoUpdateRequestAndCheck();
         await ensureStoragePermission();
 
-        try {
-          await testDB();
-        } catch (e) {
-          unawaited(
-            showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (BuildContext ctx) {
-                  return AlertDialog(
-                      title: const Text('Error loading app database'),
-                      content: Text(
-                          "The 'sqlite3.dll' library required for the internal database is missing or damaged. The app cannot operate.\n\nError:\n${e.toString()}"),
-                      actions: const []);
-                }),
-          );
-          rethrow;
-        }
+        if (targetOS != TargetOS.web) {
+          try {
+            await testDB();
+          } catch (e) {
+            unawaited(
+              showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext ctx) {
+                    return AlertDialog(
+                        title: const Text('Error loading app database'),
+                        content: Text(
+                            "The 'sqlite3.dll' library required for the internal database is missing or damaged. The app cannot operate.\n\nError:\n${e.toString()}"),
+                        actions: const []);
+                  }),
+            );
+            rethrow;
+          }
 
-        await _loadFromDb();
+          await _reloadFromStorage();
+        }
 
         initialized = true;
       } catch (e, stacktrace) {
@@ -506,6 +527,8 @@ class _MainWindowState extends State<MainWindow> {
   }
 
   _clearDownloadLocation() async {
+    assertNative();
+
     final String choreoPath = await Settings().ensureChoreosPath;
     unawaited(showDialog(
         context: context,
@@ -519,16 +542,14 @@ class _MainWindowState extends State<MainWindow> {
                 const TextSpan(text: "NOT", style: TextStyle(fontWeight: FontWeight.bold)),
                 const TextSpan(text: " downloaded by this app?\n"),
                 const TextSpan(text: "The configured choreography folder is:\n\n"),
-                    TextSpan(text: choreoPath, style: const TextStyle(fontFamily: "monospace")),
-                  ])),
+                TextSpan(text: choreoPath, style: const TextStyle(fontFamily: "monospace")),
+              ])),
               actions: [
                 TextButton(
                     onPressed: () async {
-                      final choreosPath = await Settings().ensureChoreosPath;
-                      Directory dir = Directory(choreosPath);
-                      await dir.delete(recursive: true);
+                      await wipeDirectory(await Settings().ensureChoreosPath);
                       await wipeDB();
-                      await _loadFromDb(); // Reset list view
+                      await _reloadFromStorage(); // Reset list view
 
                       print("Choreos directory wiped");
                       // Close the dialog
@@ -706,61 +727,74 @@ class _MainWindowState extends State<MainWindow> {
                 checked: sortBy == SortBy.duration,
               ),
               const PopupMenuDivider(),
-              const PopupMenuItem(child: Text("Sort direction"), enabled: false, height: 30),
-              CheckedPopupMenuItem(
-                value: PopupMenuCommands.sortDirAscending,
-                child: const Text("Ascending"),
-                checked: sortDirection == SortDirection.ascending,
-              ),
-              CheckedPopupMenuItem(
-                value: PopupMenuCommands.sortDirDescending,
-                child: const Text("Descending"),
-                checked: sortDirection == SortDirection.descending,
-              ),
-              const PopupMenuDivider(),
-              const PopupMenuItem(child: Text("Show"), enabled: false, height: 30),
-              CheckedPopupMenuItem(
-                value: PopupMenuCommands.showAll,
-                child: const Text("All"),
-                checked: showOnly == null,
-              ),
-              CheckedPopupMenuItem(
-                value: PopupMenuCommands.showMissingOnly,
-                child: const Text("Missing only"),
-                checked: showOnly == DownloadStatus.missing,
-              ),
-              CheckedPopupMenuItem(
-                value: PopupMenuCommands.showDownloadedOnly,
-                child: const Text("Downloaded only"),
-                checked: showOnly == DownloadStatus.present,
-              ),
-              const PopupMenuDivider(),
-              const PopupMenuItem(child: Text("Settings"), enabled: false, height: 30),
-              CheckedPopupMenuItem(
-                value: PopupMenuCommands.settingsUpdateCheck,
-                child: const Text("Check for updates"),
-                checked: autoUpdateEnabled,
-              ),
-              const PopupMenuItem(
-                value: PopupMenuCommands.settingsCsvUrl,
-                child: Text("Spreadsheet CSV URL…"),
-              ),
-              PopupMenuItem(
-                value: PopupMenuCommands.settingsDownloadLocation,
-                child: const Text("Download location…"),
-                enabled: !isDownloading,
-              ),
-              const PopupMenuDivider(),
-              const PopupMenuItem(child: Text("Actions"), enabled: false, height: 30),
-              PopupMenuItem(
-                value: PopupMenuCommands.wipeDownloadFolder,
-                child: const Text("Wipe downloads folder…"),
-                enabled: !isDownloading && !isRefreshing,
-              ),
-              const PopupMenuItem(value: PopupMenuCommands.atcdClubLink, child: Text("Visit atcd.club…")),
-              const PopupMenuItem(value: PopupMenuCommands.performUpdateCheck, child: Text("Check for updates…")),
-              const PopupMenuItem(value: PopupMenuCommands.aboutDialog, child: Text("About app…")),
-            ],
+                  const PopupMenuItem(child: Text("Sort direction"), enabled: false, height: 30),
+                  CheckedPopupMenuItem(
+                    value: PopupMenuCommands.sortDirAscending,
+                    child: const Text("Ascending"),
+                    checked: sortDirection == SortDirection.ascending,
+                  ),
+                  CheckedPopupMenuItem(
+                    value: PopupMenuCommands.sortDirDescending,
+                    child: const Text("Descending"),
+                    checked: sortDirection == SortDirection.descending,
+                  )
+                ] +
+                ((targetOS != TargetOS.web)
+                    ? (<PopupMenuEntry<PopupMenuCommands>>[
+                        const PopupMenuDivider(),
+                        const PopupMenuItem(child: Text("Show"), enabled: false, height: 30),
+                        CheckedPopupMenuItem(
+                          value: PopupMenuCommands.showAll,
+                          child: const Text("All"),
+                          checked: showOnly == null,
+                        ),
+                        CheckedPopupMenuItem(
+                          value: PopupMenuCommands.showMissingOnly,
+                          child: const Text("Missing only"),
+                          checked: showOnly == DownloadStatus.missing,
+                        ),
+                        CheckedPopupMenuItem(
+                          value: PopupMenuCommands.showDownloadedOnly,
+                          child: const Text("Downloaded only"),
+                          checked: showOnly == DownloadStatus.present,
+                        ),
+                        const PopupMenuDivider(),
+                        const PopupMenuItem(child: Text("Settings"), enabled: false, height: 30),
+                        CheckedPopupMenuItem(
+                          value: PopupMenuCommands.settingsUpdateCheck,
+                          child: const Text("Check for updates"),
+                          checked: autoUpdateEnabled,
+                        ),
+                        const PopupMenuItem(
+                          value: PopupMenuCommands.settingsCsvUrl,
+                          child: Text("Spreadsheet CSV URL…"),
+                        ),
+                        PopupMenuItem(
+                          value: PopupMenuCommands.settingsDownloadLocation,
+                          child: const Text("Download location…"),
+                          enabled: !isDownloading,
+                        ),
+                      ])
+                    : <PopupMenuEntry<PopupMenuCommands>>[]) +
+                <PopupMenuEntry<PopupMenuCommands>>[
+                  const PopupMenuDivider(),
+                  const PopupMenuItem(child: Text("Actions"), enabled: false, height: 30)
+                ] +
+                ((targetOS != TargetOS.web)
+                    ? <PopupMenuEntry<PopupMenuCommands>>[
+                        PopupMenuItem(
+                          value: PopupMenuCommands.wipeDownloadFolder,
+                          child: const Text("Wipe downloads folder…"),
+                          enabled: !isDownloading && !isRefreshing,
+                        ),
+                        const PopupMenuItem(
+                            value: PopupMenuCommands.performUpdateCheck, child: Text("Check for updates…"))
+                      ]
+                    : <PopupMenuEntry<PopupMenuCommands>>[]) +
+                <PopupMenuEntry<PopupMenuCommands>>[
+                  const PopupMenuItem(value: PopupMenuCommands.atcdClubLink, child: Text("Visit atcd.club…")),
+                  const PopupMenuItem(value: PopupMenuCommands.aboutDialog, child: Text("About app…")),
+                ],
           ),
         ],
       );

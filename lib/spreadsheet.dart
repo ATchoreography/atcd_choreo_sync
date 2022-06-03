@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:atcd_choreo_sync/platform/platform.dart';
 import 'package:atcd_choreo_sync/repositories.dart';
 import 'package:atcd_choreo_sync/settings.dart';
 import 'package:csv/csv.dart';
@@ -130,8 +131,20 @@ Stream<Choreo> fetchChoreos({bool has7zip = false}) async* {
 }
 
 Stream<Choreo> persistToDatabase(Stream<Choreo> choreos, Database db) async* {
+  assertNative();
+
   final repo = ChoreoRepository(db);
   await for (Choreo choreo in choreos) {
     yield await repo.insertOrUpdateByUrl(choreo);
+  }
+}
+
+Stream<Choreo> assignIncrementalIDs(Stream<Choreo> choreos) async* {
+  int count = 0;
+
+  await for (Choreo choreo in choreos) {
+    choreo.id = count;
+    yield choreo;
+    count++;
   }
 }

@@ -2,10 +2,10 @@ import 'dart:core';
 import 'dart:io';
 
 import 'package:atcd_choreo_sync/model.dart';
-import 'package:atcd_choreo_sync/utils.dart';
+import 'package:atcd_choreo_sync/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'audiotrip.dart';
+import 'audiotrip/audiotrip.dart';
 
 class Settings {
   static Future<SharedPreferences> get _prefs async => SharedPreferences.getInstance();
