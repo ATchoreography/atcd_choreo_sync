@@ -8,12 +8,12 @@ the [Audio Trip Choreography Discord](https://atcd.club).
 
 <div style="text-align: center;">
   <div style="display: inline-block;">
-  [![Get it on SideQuest](./.misc/get_it_on_sidequest.webp)](https://sidequestvr.com/app/7955)<br/>
-  For Oculus Quest and Windows
+    <a href="https://sidequestvr.com/app/7955"><img alt="Get it on SideQuest" src=".misc/get_it_on_sidequest.webp"></a><br/>
+    For Oculus Quest and Windows
   </div>
   <div style="display: inline-block;">
-  [![Get it on GitHub](./.misc/get_it_on_github.webp)](releases/)<br/>
-  For all platforms
+    <a href="releases/"><img alt="Get it on GitHub" src=".misc/get_it_on_github.webp"></a><br/>
+    For all platforms
   </div>
 </div>
 
