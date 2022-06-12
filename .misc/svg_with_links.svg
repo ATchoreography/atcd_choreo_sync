@@ -1,0 +1,24 @@
+<svg fill="none" viewBox="0 0 800 400" width="800" height="400" xmlns="http://www.w3.org/2000/svg">
+    <foreignObject width="100%" height="100%">
+        <div xmlns="http://www.w3.org/1999/xhtml">
+            <div style="text-align: center;">
+                <div style="display: inline-block;">
+                    <a href="https://sidequestvr.com/app/7955">
+                        <img alt="Get it on SideQuest"
+                            src="https://github.com/Depau/atcd_choreo_sync/raw/main/.misc/get_it_on_sidequest.webp" />
+                    </a>
+                    <br />
+                    For Oculus Quest and Windows
+                </div>
+                <div style="display: inline-block;">
+                    <a href="releases/">
+                        <img alt="Get it on GitHub"
+                            src="https://github.com/Depau/atcd_choreo_sync/raw/main/.misc/get_it_on_github.webp" />
+                    </a>
+                    <br />
+                    For all platforms
+                </div>
+            </div>
+        </div>
+    </foreignObject>
+</svg>

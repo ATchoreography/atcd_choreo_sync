@@ -6,15 +6,8 @@ Simple app for both Android (Oculus Quest native) and Windows (PCVR) to
 sync [Audio Trip](http://audiotripvr.com/) songs from
 the [Audio Trip Choreography Discord](https://atcd.club).
 
-<div style="text-align: center;">
-  <div style="display: inline-block;">
-    <a href="https://sidequestvr.com/app/7955"><img alt="Get it on SideQuest" src=".misc/get_it_on_sidequest.webp"></a><br/>
-    For Oculus Quest and Windows
-  </div>
-  <div style="display: inline-block;">
-    <a href="releases/"><img alt="Get it on GitHub" src=".misc/get_it_on_github.webp"></a><br/>
-    For all platforms
-  </div>
+<div align="center">
+  <img src=".misc/svg_with_links.svg" width="800" height="400">
 </div>
 
 ## Installing the app
