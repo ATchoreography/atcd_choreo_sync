@@ -6,6 +6,17 @@ Simple app for both Android (Oculus Quest native) and Windows (PCVR) to
 sync [Audio Trip](http://audiotripvr.com/) songs from
 the [Audio Trip Choreography Discord](https://atcd.club).
 
+<div style="text-align: center;">
+  <div style="display: inline-block;">
+  [![Get it on SideQuest](./.misc/get_it_on_sidequest.webp)](https://sidequestvr.com/app/7955)<br/>
+  For Oculus Quest and Windows
+  </div>
+  <div style="display: inline-block;">
+  [![Get it on GitHub](./.misc/get_it_on_github.webp)](releases/)<br/>
+  For all platforms
+  </div>
+</div>
+
 ## Installing the app
 
 Download the latest version of the app for your platform from
@@ -13,8 +24,16 @@ the [Releases](https://github.com/Depau/atcd_choreo_sync/releases) page.
 
 ### Oculus Quest
 
+### Using SideQuest (easier!)
+
+- Download and set-up [SideQuest](https://sidequestvr.com/setup-howto) on your computer
+- Find and install the app: [ATCD Choreography Sync](https://sidequestvr.com/app/7955)
+
+### Manually
 - Download the Android APK file
 - Drag it on the [SideQuest](https://sidequestvr.com/setup-howto) main window
+  or
+- Use `adb` to install it: `adb install atcd_choreo_sync-OculusQuest-Android-v*.apk`
 
 The Quest application will automatically install songs to the Audio Trip folder:
 
@@ -25,7 +44,7 @@ The Quest application will automatically install songs to the Audio Trip folder:
 ### Windows
 
 - There is no installer
-- Just double-click `atcd_choreo_sync.exe`
+- Just download it double-click `atcd_choreo_sync.exe`
 
 The Windows application will automatically install songs to the Audio Trip folder for PCVR:
 
