@@ -7,7 +7,7 @@ sync [Audio Trip](http://audiotripvr.com/) songs from
 the [Audio Trip Choreography Discord](https://atcd.club).
 
 <div align="center">
-  <img src=".misc/svg_with_links.svg" width="800" height="400">
+  <a href="https://sidequestvr.com/app/7955"><img alt="Get it on SideQuest" src=".misc/get_on_sidequest.svg" width="271.52" height="116.57"></a> <a href="releases/"><img alt="Get it on GitHub" src=".misc/get_on_github.svg" width="202.66" height="116.62"></a>
 </div>
 
 ## Installing the app
