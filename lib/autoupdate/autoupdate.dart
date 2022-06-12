@@ -8,7 +8,7 @@ import '_web.dart' if (dart.library.io) '_native.dart';
 export '_web.dart' if (dart.library.io) '_native.dart';
 
 final Uri _releaseInfoUrl =
-    Uri.parse("https://github.com/Depau/atcd_choreo_sync/releases/latest/download/release_info.json");
+    Uri.parse("https://github.com/ATchoreography/atcd_choreo_sync/releases/latest/download/release_info.json");
 
 Future<UpdateAction?> checkUpdatesAndGetAction() async {
   print("Performing update check");
