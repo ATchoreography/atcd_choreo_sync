@@ -7,7 +7,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:win32/win32.dart';
 
-const String audioTripPackageName = "com.KinemotikStudios.AudioTripQuest";
+import '../utils/utils.dart';
 
 // Reference:
 // - https://docs.unity3d.com/ScriptReference/Application-persistentDataPath.html
@@ -30,6 +30,19 @@ String _windowsChoreoPath() {
   }
 }
 
+Future<String> _getAndroidPackageName() async {
+  if (await isQuest()) {
+    return "com.KinemotikStudios.AudioTripQuest";
+  } else {
+    return "com.KinemotikStudios.AudioTrip";
+  }
+}
+
+Future<String> _getAndroidChoreoPath() async {
+  var packageName = await _getAndroidPackageName();
+  return "/sdcard/Android/data/" + packageName + "/files/Songs/ATCD Sync";
+}
+
 Future<String> getChoreosPath() async {
   if (Platform.isLinux || Platform.isMacOS) {
     return join(Platform.environment["HOME"]!, "ATCD Choreo Sync");
@@ -41,10 +54,10 @@ Future<String> getChoreosPath() async {
     int androidIndex = splitFilesPath.indexOf("Android");
     if (androidIndex < 0) {
       print("Unable to ask nicely for the sdcard location, going with a guess");
-      return "/sdcard/Android/data/com.KinemotikStudios.AudioTripQuest/files/Songs/ATCD Sync";
+      return await _getAndroidChoreoPath();
     }
     String androidPath = joinAll(splitFilesPath.sublist(0, androidIndex + 1));
-    return join(androidPath, "data", "com.KinemotikStudios.AudioTripQuest", "files", "Songs", "ATCD Sync");
+    return join(androidPath, "data", await _getAndroidPackageName(), "files", "Songs", "ATCD Sync");
   }
   throw UnsupportedError("The current platform is not supported!");
 }
@@ -53,7 +66,7 @@ bool? _atInstalledLazyVal;
 
 Future<bool> isAudioTripInstalled() async {
   if (Platform.isAndroid) {
-    _atInstalledLazyVal ??= await DeviceApps.isAppInstalled(audioTripPackageName);
+    _atInstalledLazyVal ??= await DeviceApps.isAppInstalled(await _getAndroidPackageName());
     return _atInstalledLazyVal!;
   }
   return false;
@@ -61,6 +74,6 @@ Future<bool> isAudioTripInstalled() async {
 
 Future<void> launchAudioTrip() async {
   if (Platform.isAndroid) {
-    await DeviceApps.openApp(audioTripPackageName);
+    await DeviceApps.openApp(await _getAndroidPackageName());
   }
 }

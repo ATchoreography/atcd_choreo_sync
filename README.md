@@ -15,23 +15,24 @@ the [Audio Trip Choreography Discord](https://atcd.club).
 Download the latest version of the app for your platform from
 the [Releases](https://github.com/ATchoreography/atcd_choreo_sync/releases) page.
 
-### Oculus Quest
+### Oculus Quest / Pico
 
-### Using SideQuest (easier!)
+### Using SideQuest (easier! - for Quest)
 
 - Download and set-up [SideQuest](https://sidequestvr.com/setup-howto) on your computer
 - Find and install the app: [ATCD Choreography Sync](https://sidequestvr.com/app/7955)
 
-### Manually
+### Manually (for all Android-based headsets)
 - Download the Android APK file
 - Drag it on the [SideQuest](https://sidequestvr.com/setup-howto) main window
   or
 - Use `adb` to install it: `adb install atcd_choreo_sync-android-v*.apk`
 
-The Quest application will automatically install songs to the Audio Trip folder:
+The application will automatically install songs to the Audio Trip folder:
 
 ```
-/sdcard/Android/data/com.KinemotikStudios.AudioTripQuest/files/Songs/ATCD Sync
+/sdcard/Android/data/com.KinemotikStudios.AudioTrip/files/Songs/ATCD Sync        # Pico
+/sdcard/Android/data/com.KinemotikStudios.AudioTripQuest/files/Songs/ATCD Sync   # Quest
 ```
 
 ### Windows

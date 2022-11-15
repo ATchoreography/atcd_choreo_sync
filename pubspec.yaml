@@ -55,6 +55,7 @@ dependencies:
   package_info_plus_windows: ^1.0.4
   url_launcher: ^6.0.20
   device_apps: ^2.2.0
+  device_info_plus: ^4.0.0
 
 dev_dependencies:
   flutter_test:
