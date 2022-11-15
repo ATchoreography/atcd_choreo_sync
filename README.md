@@ -26,7 +26,7 @@ the [Releases](https://github.com/ATchoreography/atcd_choreo_sync/releases) page
 - Download the Android APK file
 - Drag it on the [SideQuest](https://sidequestvr.com/setup-howto) main window
   or
-- Use `adb` to install it: `adb install atcd_choreo_sync-OculusQuest-Android-v*.apk`
+- Use `adb` to install it: `adb install atcd_choreo_sync-android-v*.apk`
 
 The Quest application will automatically install songs to the Audio Trip folder:
 

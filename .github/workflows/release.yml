@@ -227,7 +227,7 @@ jobs:
           mv app_windows/atcd_choreo_sync "atcd_choreo_sync-windows-$TAG"
           zip -r "outputs/atcd_choreo_sync-windows-$TAG.zip" "atcd_choreo_sync-windows-$TAG"
           zip -r "outputs/atcd_choreo_sync-macOS-$TAG.zip" "ATCD Choreography Sync.app" "Fix App is damaged.txt"
-          mv flutter-apk/app-release.apk "outputs/atcd_choreo_sync-OculusQuest-android-$TAG.apk"
+          mv flutter-apk/app-release.apk "outputs/atcd_choreo_sync-android-$TAG.apk"
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2

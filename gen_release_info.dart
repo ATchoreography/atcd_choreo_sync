@@ -25,7 +25,7 @@ main(List<String> args) {
     "versionCode": versionCode,
     "releasePage": "https://github.com/ATchoreography/atcd_choreo_sync/releases/tag/v$versionName",
     "downloads": <String, String>{
-      "android": "$urlBase/atcd_choreo_sync-OculusQuest-android-v$versionName.apk",
+      "android": "$urlBase/atcd_choreo_sync-android-v$versionName.apk",
       "windows": "$urlBase/atcd_choreo_sync-windows-v$versionName.zip",
       "macos": "$urlBase/atcd_choreo_sync-macOS-v$versionName.zip",
       "linux_appimage": "$urlBase/atcd_choreo_sync-gnulinux-v$versionName.AppImage",
