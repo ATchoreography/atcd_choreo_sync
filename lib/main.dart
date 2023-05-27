@@ -79,6 +79,9 @@ class ChoreoListEntry extends StatelessWidget {
       case DownloadStatus.missing:
       case DownloadStatus.toDownload:
         return Container(
+          width: 48,
+          height: 48,
+          padding: EdgeInsets.zero,
           child: Checkbox(
               checkColor: const Color(0xFF000000),
               value: status == DownloadStatus.toDownload,
@@ -87,27 +90,24 @@ class ChoreoListEntry extends StatelessWidget {
                   : (bool? status) async {
                 return setShouldDownloadCallback(choreo, status ?? false);
               }),
-          width: 48,
-          height: 48,
-          padding: EdgeInsets.zero,
         );
       case DownloadStatus.downloading:
         return Container(
-            child: const CircularProgressIndicator(value: null),
             width: 48,
             height: 48,
-            padding: const EdgeInsets.all(14));
+            padding: const EdgeInsets.all(14),
+            child: const CircularProgressIndicator(value: null));
       case DownloadStatus.present:
         return Container(
+          width: 48,
+          height: 48,
+          padding: EdgeInsets.zero,
           child: IconButton(
             onPressed: !isDownloading ? () async => await deleteCallback(choreo) : null,
             icon: const Icon(Icons.delete),
             iconSize: 24,
             padding: EdgeInsets.zero,
           ),
-          width: 48,
-          height: 48,
-          padding: EdgeInsets.zero,
         );
     }
   }
@@ -427,7 +427,7 @@ class _MainWindowState extends State<MainWindow> {
             action: SnackBarAction(
               label: "More info...",
               onPressed: () async =>
-                  await launch("https://telegra.ph/Installing-7-Zip-for-the-ATCD-Choreo-Sync-tool-04-03"),
+                  await launchUrl(Uri.parse("https://telegra.ph/Installing-7-Zip-for-the-ATCD-Choreo-Sync-tool-04-03")),
             ),
           ));
         } else {
@@ -602,7 +602,7 @@ class _MainWindowState extends State<MainWindow> {
                           "There is NO WARRANTY, to the extent permitted by law.\n");
                   break;
                 case PopupMenuCommands.atcdClubLink:
-                  await launch("https://www.atcd.club");
+                  await launchUrl(Uri.parse("https://www.atcd.club"));
                   break;
                 case PopupMenuCommands.wipeDownloadFolder:
                   await _clearDownloadLocation();
@@ -695,75 +695,75 @@ class _MainWindowState extends State<MainWindow> {
               }
             },
             itemBuilder: (context) => <PopupMenuEntry<PopupMenuCommands>>[
-              const PopupMenuItem(child: Text("Sort by"), enabled: false, height: 30),
+              const PopupMenuItem(enabled: false, height: 30, child: Text("Sort by")),
               CheckedPopupMenuItem(
                 value: PopupMenuCommands.sortByTitle,
-                child: const Text("Title"),
                 checked: sortBy == SortBy.title,
+                child: const Text("Title"),
               ),
               CheckedPopupMenuItem(
                 value: PopupMenuCommands.sortByArtists,
-                child: const Text("Artists"),
                 checked: sortBy == SortBy.artists,
+                child: const Text("Artists"),
               ),
               CheckedPopupMenuItem(
                 value: PopupMenuCommands.sortByMapper,
-                child: const Text("Mapper"),
                 checked: sortBy == SortBy.mapper,
+                child: const Text("Mapper"),
               ),
               CheckedPopupMenuItem(
                 value: PopupMenuCommands.sortByReleased,
-                child: const Text("Release date"),
                 checked: sortBy == SortBy.released,
+                child: const Text("Release date"),
               ),
               CheckedPopupMenuItem(
                 value: PopupMenuCommands.sortByBpm,
-                child: const Text("BPM"),
                 checked: sortBy == SortBy.bpm,
+                child: const Text("BPM"),
               ),
               CheckedPopupMenuItem(
                 value: PopupMenuCommands.sortByDuration,
-                child: const Text("Duration"),
                 checked: sortBy == SortBy.duration,
+                child: const Text("Duration"),
               ),
               const PopupMenuDivider(),
-                  const PopupMenuItem(child: Text("Sort direction"), enabled: false, height: 30),
+                  const PopupMenuItem(enabled: false, height: 30, child: Text("Sort direction")),
                   CheckedPopupMenuItem(
                     value: PopupMenuCommands.sortDirAscending,
-                    child: const Text("Ascending"),
                     checked: sortDirection == SortDirection.ascending,
+                    child: const Text("Ascending"),
                   ),
                   CheckedPopupMenuItem(
                     value: PopupMenuCommands.sortDirDescending,
-                    child: const Text("Descending"),
                     checked: sortDirection == SortDirection.descending,
+                    child: const Text("Descending"),
                   )
                 ] +
                 ((targetOS != TargetOS.web)
                     ? (<PopupMenuEntry<PopupMenuCommands>>[
                         const PopupMenuDivider(),
-                        const PopupMenuItem(child: Text("Show"), enabled: false, height: 30),
+                        const PopupMenuItem(enabled: false, height: 30, child: Text("Show")),
                         CheckedPopupMenuItem(
                           value: PopupMenuCommands.showAll,
-                          child: const Text("All"),
                           checked: showOnly == null,
+                          child: const Text("All"),
                         ),
                         CheckedPopupMenuItem(
                           value: PopupMenuCommands.showMissingOnly,
-                          child: const Text("Missing only"),
                           checked: showOnly == DownloadStatus.missing,
+                          child: const Text("Missing only"),
                         ),
                         CheckedPopupMenuItem(
                           value: PopupMenuCommands.showDownloadedOnly,
-                          child: const Text("Downloaded only"),
                           checked: showOnly == DownloadStatus.present,
+                          child: const Text("Downloaded only"),
                         ),
                         const PopupMenuDivider(),
-                        const PopupMenuItem(child: Text("Settings"), enabled: false, height: 30),
+                        const PopupMenuItem(enabled: false, height: 30, child: Text("Settings")),
                         CheckedPopupMenuItem(
                           value: PopupMenuCommands.settingsUpdateCheck,
-                          child: const Text("Check for updates"),
                           checked: autoUpdateEnabled,
+                          child: const Text("Check for updates"),
                         ),
                         const PopupMenuItem(
                           value: PopupMenuCommands.settingsCsvUrl,
@@ -771,21 +771,21 @@ class _MainWindowState extends State<MainWindow> {
                         ),
                         PopupMenuItem(
                           value: PopupMenuCommands.settingsDownloadLocation,
-                          child: const Text("Download location…"),
                           enabled: !isDownloading,
+                          child: const Text("Download location…"),
                         ),
                       ])
                     : <PopupMenuEntry<PopupMenuCommands>>[]) +
                 <PopupMenuEntry<PopupMenuCommands>>[
                   const PopupMenuDivider(),
-                  const PopupMenuItem(child: Text("Actions"), enabled: false, height: 30)
+                  const PopupMenuItem(enabled: false, height: 30, child: Text("Actions"))
                 ] +
                 ((targetOS != TargetOS.web)
                     ? <PopupMenuEntry<PopupMenuCommands>>[
                         PopupMenuItem(
                           value: PopupMenuCommands.wipeDownloadFolder,
-                          child: const Text("Wipe downloads folder…"),
                           enabled: !isDownloading && !isRefreshing,
+                          child: const Text("Wipe downloads folder…"),
                         ),
                         const PopupMenuItem(
                             value: PopupMenuCommands.performUpdateCheck, child: Text("Check for updates…"))
@@ -825,10 +825,10 @@ class _MainWindowState extends State<MainWindow> {
         progress = null;
       }
       list.add(Container(
-        child: CircularProgressIndicator(value: progress),
         height: 32,
         width: 32,
         padding: const EdgeInsets.all(6),
+        child: CircularProgressIndicator(value: progress),
       ));
     } else {
       var statusSet = downloadStatus.values.toSet();

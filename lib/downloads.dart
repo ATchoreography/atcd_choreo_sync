@@ -90,7 +90,7 @@ Future<List<String>> downloadChoreo(Choreo choreo) async {
   String downloadPath;
 
   if (isArchive) {
-    downloadPath = join((await getTemporaryDirectory()).path, choreo.id!.toString() + "-" + filename);
+    downloadPath = join((await getTemporaryDirectory()).path, "${choreo.id!}-$filename");
   } else {
     downloadPath = join(choreoPath, filename);
   }

@@ -19,8 +19,8 @@ String fixFreedomDate(String freedomDate) {
 
 Stream<Choreo> fetchChoreos({bool has7zip = false}) async* {
   print("Fetching choreography spreadsheet");
-  final Uri _csvUrl = Uri.parse(await Settings().csvUrl);
-  var resp = await http.get(_csvUrl);
+  final Uri csvUrl = Uri.parse(await Settings().csvUrl);
+  var resp = await http.get(csvUrl);
 
   // For some reason it can't decode it properly by itself
   var body = utf8.decode(resp.bodyBytes);
@@ -100,7 +100,7 @@ Stream<Choreo> fetchChoreos({bool has7zip = false}) async* {
       }
 
       if (row[warningsCol].toString().trim().isNotEmpty) {
-        title += " " + row[warningsCol];
+        title += " ${row[warningsCol]}";
       }
 
       num? bpm;
