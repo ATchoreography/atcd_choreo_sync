@@ -28,10 +28,10 @@ dependencies:
   archive: ^3.3.7
   tuple: ^2.0.1
   prompt_dialog: ^1.0.10
-  package_info_plus: ^4.0.1
+  package_info_plus: ^3.1.2
   url_launcher: ^6.1.11
   device_apps: ^2.2.0
-  device_info_plus: ^9.0.1
+  device_info_plus: ^8.2.2
   saf: ^1.0.3+4
   path: ^1.8.3
 
