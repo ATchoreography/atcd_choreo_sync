@@ -32,6 +32,8 @@ dependencies:
   url_launcher: ^6.1.11
   device_apps: ^2.2.0
   device_info_plus: ^9.0.1
+  saf: ^1.0.3+4
+  path: ^1.8.3
 
 dev_dependencies:
   flutter_test:
