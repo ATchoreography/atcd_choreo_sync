@@ -16,7 +16,7 @@ import 'package:atcd_choreo_sync/utils/utils.dart';
 import 'package:atcd_choreo_sync/version.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_search_bar/flutter_search_bar.dart';
+import 'package:flutter_search_bar/flutter_search_bar.dart' as search_bar;
 import 'package:prompt_dialog/prompt_dialog.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -181,7 +181,7 @@ enum PopupMenuCommands {
 
 class _MainWindowState extends State<MainWindow> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
-  late SearchBar searchBar;
+  late search_bar.SearchBar searchBar;
 
   String filterQuery = "";
   bool initialized = false;
@@ -206,7 +206,7 @@ class _MainWindowState extends State<MainWindow> {
       _filterSortChoreos();
     });
 
-    searchBar = SearchBar(
+    searchBar = search_bar.SearchBar(
         inBar: false,
         setState: setState,
         onChanged: (String query) => setState(() {
