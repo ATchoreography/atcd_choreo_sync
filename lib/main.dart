@@ -397,7 +397,7 @@ class _MainWindowState extends State<MainWindow> {
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: const Text("Would you like to check for updates on startup?"),
-        duration: const Duration(seconds: 30),
+        duration: const Duration(seconds: 30000),
         action: SnackBarAction(
           label: "Enable",
           onPressed: () async {
